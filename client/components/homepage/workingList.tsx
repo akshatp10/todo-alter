@@ -3,12 +3,19 @@
 import { Pencil, Plus } from "lucide-react";
 
 export default function WokringListComponent() {
+
+    const handleClickNewItem = () => {
+        console.log('====================================');
+        console.log("Handle New Item Clicked");
+        console.log('====================================');
+    }
+
     return (
         <>
             {/* Top Title and New Item */}
             <div className="flex w-full justify-between p-3">
                 <div className="text-3xl font-bold flex gap-4 items-center">Groceries <Pencil width={20} className="mt-1 text-gray-500" /></div>
-                <button className="bg-black text-white px-4 cursor-pointer flex justify-center items-center gap-2 rounded-md">
+                <button className="bg-black text-white px-4 cursor-pointer flex justify-center items-center gap-2 rounded-md" onClick={handleClickNewItem}>
                     <Plus className="w-3.5" /> New Task
                 </button>
             </div>
