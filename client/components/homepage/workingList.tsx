@@ -30,7 +30,7 @@ export default function WokringListComponent({ listDetails }: any) {
             {listDetail.items.map((item: any) => (
                 <div className="flex w-full gap-2 py-10 border-b border-gray-200" key={item.id}>
                     <div className="w-[5%] flex justify-end">
-                        <input type="checkbox" name="checkTask" id="" checked={item.status === "completed"} />
+                        <input type="checkbox" name="checkTask" id="" defaultChecked={item.status === "completed"} />
                     </div>
                     <div className="flex flex-col w-[95%]">
                         {item.item_name}

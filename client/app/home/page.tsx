@@ -4,50 +4,7 @@ import SideBarHome from "@/components/homepage/sidebar";
 import ListStatsComponent from "@/components/homepage/statisticsComponent";
 import WokringListComponent from "@/components/homepage/workingList";
 import { useState } from "react";
-
-const sampleList = [
-    {
-        "id": 1,
-        "listName": "Groceries",
-        "items": [
-            {
-                "id": 1,
-                "item_name": "Snacks",
-                "status": "pending",
-                "tags": ["important", "time-sensitive"]
-            },
-            {
-                "id": 2,
-                "item_name": "Vegetables",
-                "status": "pending",
-                "tags": ["healthy", "time-sensitive"]
-            }
-        ]
-    },
-    {
-        "id": 2,
-        "listName": "My Second List",
-        "items": [
-            {
-                "id": 1,
-                "item_name": "List Item 1",
-                "status": "pending",
-                "tags": ["important", "time-sensitive"]
-            },
-            {
-                "id": 2,
-                "item_name": "List Item 2",
-                "status": "pending",
-                "tags": ["healthy", "time-sensitive"]
-            }, {
-                "id": 3,
-                "item_name": "List Item 3",
-                "status": "completed",
-                "tags": ["healthy"]
-            }
-        ]
-    }
-]
+import { sampleList } from "../../components/sampleData"
 
 
 export default function HomePage() {

@@ -23,8 +23,8 @@ export default function Authenticate() {
         }
         else {
             console.log(data)
-            redirect('/home')
         }
+        redirect('/home')
     }
 
     return (
