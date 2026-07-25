@@ -1,6 +1,6 @@
 "use client";
 
-export default function ListStatsComponent() {
+export default function ListStatsComponent({ listDetails }: any) {
     return (
         <>
             <div className="h-[90%]">
@@ -10,15 +10,15 @@ export default function ListStatsComponent() {
                 <div className="flex flex-col gap-2 p-3 font-semibold">
                     <div className="flex justify-between">
                         <p>Total Tasks</p>
-                        <p>0</p>
+                        <p>{listDetails.items.length}</p>
                     </div>
                     <div className="flex justify-between">
                         <p>Pending</p>
-                        <p className="text-red-500">2</p>
+                        <p className="text-red-500">{listDetails.items.filter(item => item.status === "pending").length}</p>
                     </div>
                     <div className="flex justify-between">
                         <p>Completed</p>
-                        <p className="text-green-500">0</p>
+                        <p className="text-green-500">{listDetails.items.filter(item => item.status === "completed").length}</p>
                     </div>
                 </div>
 

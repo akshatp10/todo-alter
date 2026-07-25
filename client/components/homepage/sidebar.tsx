@@ -3,7 +3,13 @@
 import { LogOut } from "lucide-react";
 import { redirect } from "next/navigation";
 
-export default function SideBarHome() {
+interface propDetails {
+    activeList: any,
+    setList: any,
+    data: any
+}
+
+export default function SideBarHome({ activeList, setList, data }: propDetails) {
 
     const handleNewList = () => {
         console.log('====================================');
@@ -29,6 +35,13 @@ export default function SideBarHome() {
             {/* List navigation and components */}
             <div className="text-md flex flex-col items-start gap-2">
                 <span className="font-bold text-gray-500">MY LISTS</span>
+
+                {data.map((list: any) => (
+                    <button key={list.id} className={`text-[14px] px-3 cursor-pointer hover:bg-gray-200 w-full py-1 text-start rounded-md ${list.id === activeList ? "bg-gray-200" : ""}`}
+                        onClick={() => { setList(list.id) }}>
+                        {list.listName}
+                    </button>
+                ))}
 
                 <button className="text-gray-400 text-[14px] px-3 cursor-pointer hover:bg-gray-200 hover:text-gray-500 w-full py-1 text-start rounded-md" onClick={handleNewList}>+ New List</button>
             </div>
