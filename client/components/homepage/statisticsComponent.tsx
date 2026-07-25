@@ -1,6 +1,16 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 export default function ListStatsComponent({ listDetails }: any) {
+
+    const [publicAccess, setPublicAccess] = useState<boolean>(false)
+
+    useEffect(() => {
+        setPublicAccess(false)
+    }, [listDetails])
+
+
     return (
         <>
             <div className="h-[90%]">
@@ -46,12 +56,21 @@ export default function ListStatsComponent({ listDetails }: any) {
                 </div>
             </div>
 
-            <div className="flex flex-col py-4 border-t border-gray-200 gap-2">
-                <span className="font-bold text-gray-500 text-md">PUBLIC ACCESS</span>
-                <div className="bg-gray-200 text-xs p-2 max-h-20 rounded-md">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit natus atque amet, explicabo aspernatur eius temporibus odio mollitia omnis, velit, vel nostrum. Impedit magni dolores autem, veniam laudantium neque accusamus.</div>
-                <button className="mx-auto w-full border py-1 rounded-md border-gray-200 cursor-pointer">Copy Public Link</button>
-                <button className="mx-auto w-full text-red-500 border py-1 rounded-md border-gray-200 cursor-pointer">Revoke Access</button>
-            </div>
+            {publicAccess ?
+                <div className="flex flex-col py-4 border-t border-gray-200 gap-2">
+                    <span className="font-bold text-gray-500 text-md">PUBLIC ACCESS</span>
+                    <div className="bg-gray-200 text-xs p-2 max-h-20 rounded-md">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit natus atque amet, explicabo aspernatur eius temporibus odio mollitia omnis, velit, vel nostrum. Impedit magni dolores autem, veniam laudantium neque accusamus.</div>
+                    <button className="mx-auto w-full border py-1 rounded-md border-gray-200 cursor-pointer" onClick={() => {
+                        navigator.clipboard.writeText("Copying the data to clipboard")
+                    }}>Copy Public Link</button>
+                    <button className="mx-auto w-full text-red-500 bg-red-50 border py-1 rounded-md border-gray-200 cursor-pointer" onClick={() => { setPublicAccess(false) }}>Revoke Access</button>
+                </div>
+                :
+                <div className="flex flex-col py-4 border-t border-gray-200 gap-2">
+                    <span className="font-bold text-gray-500 text-md">PUBLIC ACCESS</span>
+                    <button className="mx-auto w-full text-green-500 bg-green-50 border py-1 rounded-md border-gray-200 cursor-pointer" onClick={() => { setPublicAccess(true) }}>Give Public Access</button>
+                </div>
+            }
         </>
     );
 }
