@@ -15,7 +15,7 @@ export default function SideBarHome() {
         <>
             {/* Username and signout */}
             <div className="w-full flex justify-between">
-                <span className="font-bold text-xl">Vignesh Kumar</span>
+                <span className="font-bold text-xl">Akshat Pratyush</span>
                 <button className="scale-[0.75] cursor-pointer" onClick={() => {
                     redirect("/")
                 }}>

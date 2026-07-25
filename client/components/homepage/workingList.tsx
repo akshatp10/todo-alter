@@ -1,17 +1,21 @@
 "use client";
 
 import { Pencil, Plus } from "lucide-react";
+import NewListItemComponent from "./newList";
+import { useState } from "react";
 
 export default function WokringListComponent() {
-
+    const [newItem, setNewItem] = useState(false)
     const handleClickNewItem = () => {
-        console.log('====================================');
-        console.log("Handle New Item Clicked");
-        console.log('====================================');
+        setNewItem(true)
     }
 
     return (
         <>
+            {/* Enter a new item */}
+            {newItem && <NewListItemComponent setNewItem={setNewItem} />}
+
+
             {/* Top Title and New Item */}
             <div className="flex w-full justify-between p-3">
                 <div className="text-3xl font-bold flex gap-4 items-center">Groceries <Pencil width={20} className="mt-1 text-gray-500" /></div>
