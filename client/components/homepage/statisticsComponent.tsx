@@ -14,11 +14,11 @@ export default function ListStatsComponent({ listDetails }: any) {
                     </div>
                     <div className="flex justify-between">
                         <p>Pending</p>
-                        <p className="text-red-500">{listDetails.items.filter(item => item.status === "pending").length}</p>
+                        <p className="text-red-500">{listDetails.items.filter((item: { status: string; }) => item.status === "pending").length}</p>
                     </div>
                     <div className="flex justify-between">
                         <p>Completed</p>
-                        <p className="text-green-500">{listDetails.items.filter(item => item.status === "completed").length}</p>
+                        <p className="text-green-500">{listDetails.items.filter((item: { status: string; }) => item.status === "completed").length}</p>
                     </div>
                 </div>
 
