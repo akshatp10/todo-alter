@@ -3,6 +3,7 @@
 import { Pencil, Plus } from "lucide-react";
 import NewListItemComponent from "./newList";
 import { useState } from "react";
+import AccordianComponent from "./accordianComponent";
 
 export default function WokringListComponent({ listDetails }: any) {
     const [newItem, setNewItem] = useState(false)
@@ -44,6 +45,8 @@ export default function WokringListComponent({ listDetails }: any) {
                     </div>
                 </div>
             ))}
+
+            <AccordianComponent />
         </>
     );
 }
