@@ -2,7 +2,7 @@
 
 import { X } from "lucide-react";
 
-export default function NewListItemComponent({ setNewItem }) {
+export default function NewListItemComponent({ setNewItem }: any) {
     return (
         <>
             <div className="absolute w-full h-full backdrop-blur-xs left-0 top-0" />
