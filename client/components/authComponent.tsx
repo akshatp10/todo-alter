@@ -58,7 +58,7 @@ export default function Authenticate() {
                 </div>
 
                 <div className="flex flex-col mt-5">
-                    <input type="submit" value={isLogin ? "Login" : "Register"} disabled className="bg-blue-500 px-5 py-1 rounded-full text-white cursor-pointer hover:scale-[1.05]" />
+                    <input type="submit" value={isLogin ? "Login" : "Register"} className="bg-blue-500 px-5 py-1 rounded-full text-white cursor-pointer hover:scale-[1.05]" />
                     <div className="text-[13px]">
                         {isLogin ?
                             <>
