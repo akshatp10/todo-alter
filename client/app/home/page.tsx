@@ -21,7 +21,7 @@ export default function HomePage() {
                     <WokringListComponent listDetails={sampleList[currentList - 1]} />
                 </div>
                 <div className="flex flex-col w-1/3 border-l border-gray-200 p-4">
-                    <ListStatsComponent listDetails={sampleList[currentList - 1]} />
+                    <ListStatsComponent />
                 </div>
             </div>
         </>
