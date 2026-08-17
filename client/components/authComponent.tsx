@@ -7,35 +7,36 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const loginSchema = z.object({
-    email: z
+    email: z.email("Please enter a valid email address"),
+
+    name: z
         .string()
-        .email("Please enter valid email address"),
+        .trim()
+        .min(2, "Name must be at least 2 characters")
+        .max(50, "Name cannot exceed 50 characters"),
 
     password: z
         .string()
         .min(6, "Password should be atleast 6 characters"),
 });
 
-const registerSchema = z
-    .object({
-        email: z
-            .string()
-            .email("Please enter valid email address"),
+const registerSchema = z.object({
+    email: z.email("Please enter a valid email address"),
 
-        name: z
-            .string()
-            .trim()
-            .min(2, "Name must be at least 2 characters")
-            .max(50, "Name cannot exceed 50 characters"),
+    name: z
+        .string()
+        .trim()
+        .min(2, "Name must be at least 2 characters")
+        .max(50, "Name cannot exceed 50 characters"),
 
-        password: z
-            .string()
-            .min(6, "Password should be atleast 6 characters"),
+    password: z
+        .string()
+        .min(6, "Password should be atleast 6 characters"),
 
-        confirmPassword: z
-            .string()
-            .min(1, "Please confirm your password"),
-    })
+    confirmPassword: z
+        .string()
+        .min(1, "Please confirm your password"),
+})
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords do not match",
         path: ["confirmPassword"],
@@ -94,28 +95,25 @@ export default function Authenticate() {
                         )}
 
                     </div>
-                    {!isLogin ?
-                        <div className="w-full flex justify-between flex-col">
-                            {/* <span>Name : </span> */}
-                            <input
-                                type="text"
-                                className={`border-b px-2 py-1 outline-none ${"name" in errors && errors.name
-                                    ? "border-red-500"
-                                    : "border-gray-300"
-                                    }`}
-                                {...register("name")}
-                                placeholder="Enter Your name"
-                            />
+                    <div className="w-full flex justify-between flex-col">
+                        {/* <span>Name : </span> */}
+                        <input
+                            type="text"
+                            className={`border-b px-2 py-1 outline-none ${errors.name
+                                ? "border-red-500"
+                                : "border-gray-300"
+                                }`}
+                            {...register("name")}
+                            placeholder="Enter Your name"
+                        />
 
-                            {"name" in errors && errors.name && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {errors.name.message}
-                                </p>
-                            )}
+                        {errors.name && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errors.name.message}
+                            </p>
+                        )}
 
-                        </div>
-                        : ""
-                    }
+                    </div>
                     <div className="w-full flex justify-between flex-col">
                         {/* <span>Password : </span> */}
                         <input
