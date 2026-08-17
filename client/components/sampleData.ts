@@ -1,4 +1,6 @@
-const sampleList = [
+import type { TodoList } from "../store/todoStore";
+
+const sampleList: TodoList[] = [
 	{
 		id: 1,
 		listName: "Groceries",
