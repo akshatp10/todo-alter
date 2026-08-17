@@ -12,7 +12,7 @@ export default function WokringListComponent() {
         setNewItem(true)
     }
 
-    const { lists, activeListId, addTask, toggleTask } = useTodoStore();
+    const { lists, activeListId, toggleTask } = useTodoStore();
 
     const currentList: TodoList = lists.find((list) => (list.id === activeListId))!;
 

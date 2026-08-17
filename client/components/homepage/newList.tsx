@@ -1,23 +1,101 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useState } from "react";
+import useTodoStore from "@/store/todoStore";
 
-export default function NewListItemComponent({ setNewItem }: any) {
+type NewListItemProps = {
+    setNewItem: (value: boolean) => void;
+};
+
+export default function NewListItemComponent({
+    setNewItem,
+}: NewListItemProps) {
+    const [itemName, setItemName] = useState("");
+    const [tagsInput, setTagsInput] = useState("");
+
+    const addTask = useTodoStore((state) => state.addTask);
+
+    const handleAddItem = () => {
+        const trimmedItem = itemName.trim();
+
+        if (!trimmedItem) return;
+
+        const tags = tagsInput
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean);
+
+        addTask(trimmedItem, tags);
+
+        setNewItem(false);
+    };
+
     return (
         <>
-            <div className="absolute w-full h-full backdrop-blur-xs left-0 top-0" />
-            <div className="absolute w-1/2 min-h-40 bg-black z-10 translate-y-44 text-white rounded-2xl p-10 flex flex-col gap-5">
-                <div className="flex justify-between">
-                    <p className="font-bold text-2xl">New Item</p>
-                    <button className="cursor-pointer hover:rotate-45 transition" onClick={() => { setNewItem(false) }}>
+            {/* Backdrop */}
+            <div
+                className="fixed inset-0 z-10 backdrop-blur-xs"
+                onClick={() => setNewItem(false)}
+            />
+
+            {/* Modal */}
+            <div className="fixed left-1/2 top-1/2 z-20 w-1/2 -translate-x-1/2 -translate-y-1/2 bg-black text-white rounded-2xl p-10 flex flex-col gap-5">
+
+                {/* Header */}
+                <div className="flex justify-between items-center">
+                    <p className="font-bold text-2xl">
+                        New Item
+                    </p>
+
+                    <button
+                        type="button"
+                        className="cursor-pointer hover:rotate-45 transition"
+                        onClick={() => setNewItem(false)}
+                    >
                         <X />
                     </button>
                 </div>
-                <textarea name="newItem" id="" className="bg-white/20 rounded-2xl min-h-20 max-h-40 px-2.5 py-1.5"></textarea>
+
+                {/* Task */}
+                <div className="flex flex-col gap-2">
+                    <label className="text-sm text-gray-300">
+                        Task
+                    </label>
+
+                    <textarea
+                        value={itemName}
+                        onChange={(e) => setItemName(e.target.value)}
+                        placeholder="What needs to be done?"
+                        autoFocus
+                        className="bg-white/20 rounded-xl min-h-20 max-h-40 px-3 py-2 outline-none resize-none placeholder:text-gray-400"
+                    />
+                </div>
+
+                {/* Tags */}
+                <div className="flex flex-col gap-2">
+                    <label className="text-sm text-gray-300">
+                        Tags
+                    </label>
+
+                    <input
+                        type="text"
+                        value={tagsInput}
+                        onChange={(e) => setTagsInput(e.target.value)}
+                        placeholder="work, important, frontend"
+                        className="bg-white/20 rounded-xl px-3 py-2 outline-none placeholder:text-gray-400"
+                    />
+                </div>
+
+                {/* Add */}
                 <button
-                    className="bg-white w-fit items-center justify-center mx-auto text-black px-4 py-2 rounded-md cursor-pointer"
-                    onClick={() => { setNewItem(false) }}
-                >Add Item</button>
+                    type="button"
+                    onClick={handleAddItem}
+                    disabled={!itemName.trim()}
+                    className="bg-white w-fit mx-auto text-black px-5 py-2 rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Add Item
+                </button>
             </div>
         </>
     );
