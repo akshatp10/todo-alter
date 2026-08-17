@@ -10,8 +10,8 @@ type TodoStates = {
 
 type TodoActions = {
 	addList: (name: string) => void;
-	addTask: (listId: number, title: string, tags?: string[]) => void;
-	toggleTask: (listId: number, taskId: number) => void;
+	addTask: (item_name: string, tags?: string[]) => void;
+	toggleTask: (taskId: number) => void;
 	setActiveList: (listId: number) => void;
 };
 
@@ -42,9 +42,34 @@ const useTodoStore = create<TodoStore>()(
 						activeListId: newId,
 					};
 				}),
-			addTask: () => {},
-			toggleTask: () => {},
-			setActiveList: () => {},
+
+			addTask: (item_name, tags) => {},
+
+			toggleTask: (taskId) =>
+				set((state) => ({
+					lists: state.lists.map((list) => {
+						if (list.id !== state.activeListId) {
+							return list;
+						}
+
+						return {
+							...list,
+							items: list.items.map((item) =>
+								item.id === taskId
+									? {
+											...item,
+											status:
+												item.status === "completed"
+													? "pending"
+													: "completed",
+										}
+									: item,
+							),
+						};
+					}),
+				})),
+
+			setActiveList: (listId) => set(() => ({ activeListId: listId })),
 		}),
 		{
 			name: "todo-storage",
