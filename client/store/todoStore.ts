@@ -1,5 +1,5 @@
 import { sampleList } from "@/components/sampleData";
-import { TodoList } from "@/types/todo";
+import { Task, TodoList } from "@/types/todo";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -43,7 +43,28 @@ const useTodoStore = create<TodoStore>()(
 					};
 				}),
 
-			addTask: (item_name, tags) => {},
+			addTask: (item_name, tags) =>
+				set((state) => ({
+					lists: state.lists.map((list) => {
+						if (list.id !== state.activeListId) return list;
+
+						const newId =
+							Math.max(0, ...list.items.map((item) => item.id)) +
+							1;
+
+						const newTask: Task = {
+							id: newId,
+							item_name: item_name,
+							status: "pending",
+							tags: tags ? tags : [],
+						};
+
+						return {
+							...list,
+							items: [...list.items, newTask],
+						};
+					}),
+				})),
 
 			toggleTask: (taskId) =>
 				set((state) => ({
@@ -76,3 +97,5 @@ const useTodoStore = create<TodoStore>()(
 		},
 	),
 );
+
+export default useTodoStore;
