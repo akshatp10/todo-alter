@@ -1,4 +1,4 @@
-import type { TodoList } from "../store/todoStore";
+import { TodoList } from "@/types/todo";
 
 const sampleList: TodoList[] = [
 	{
