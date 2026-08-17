@@ -4,7 +4,7 @@ import { Pencil, Plus } from "lucide-react";
 import NewListItemComponent from "./newList";
 import { useState } from "react";
 import useTodoStore from "@/store/todoStore";
-import { TodoList } from "@/types/todo";
+import { Task, TodoList } from "@/types/todo";
 
 export default function WokringListComponent() {
     const [newItem, setNewItem] = useState(false)
@@ -31,7 +31,7 @@ export default function WokringListComponent() {
             </div>
 
             {/* Showing the list items */}
-            {currentList?.items?.length > 0 ? currentList.items.map((item: any) => (
+            {currentList?.items?.length > 0 ? currentList.items.map((item: Task) => (
                 <div className="flex w-full gap-2 py-10 border-b border-gray-200" key={item.id}>
                     <div className="w-[5%] flex justify-end">
                         <input type="checkbox" name="checkTask"
@@ -42,7 +42,7 @@ export default function WokringListComponent() {
                     <div className="flex flex-col w-[95%]">
                         {item.item_name}
                         <div className="flex text-xs">
-                            {item.tags.map((tag: any) => (
+                            {item.tags.map((tag: string) => (
                                 <span className="bg-gray-100 px-2 mr-2 rounded-xs" key={tag}>
                                     #{tag}
                                 </span>

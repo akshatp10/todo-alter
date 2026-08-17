@@ -1,6 +1,7 @@
 "use client";
 
 import useTodoStore from "@/store/todoStore";
+import { TodoList } from "@/types/todo";
 import { LogOut } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useState } from "react";
@@ -40,7 +41,7 @@ export default function SideBarHome() {
             <div className="text-md flex flex-col items-start gap-2">
                 <span className="font-bold text-gray-500">MY LISTS</span>
 
-                {lists.map((list: any) => (
+                {lists.map((list: TodoList) => (
                     <button key={list.id} className={`text-[14px] px-3 cursor-pointer hover:bg-gray-200 w-full py-1 text-start rounded-md ${list.id === activeListId ? "bg-gray-200" : ""}`}
                         onClick={() => { setActiveList(list.id) }}>
                         {list.listName}
