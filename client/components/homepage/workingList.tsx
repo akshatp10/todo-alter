@@ -46,7 +46,7 @@ export default function WokringListComponent({ listDetails }: any) {
                 </div>
             ))}
 
-            <AccordianComponent />
+            {/* <AccordianComponent /> */}
         </>
     );
 }

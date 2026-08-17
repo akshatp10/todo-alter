@@ -15,7 +15,7 @@ export default function HomePage() {
         <>
             <div className="w-screen h-screen flex">
                 <div className="flex flex-col gap-4 border-r border-gray-200 bg-gray-100 w-1/3 p-4">
-                    <SideBarHome activeList={currentList} setList={setCurrentList} data={sampleList} />
+                    <SideBarHome />
                 </div>
                 <div className="flex flex-col w-2/3 p-4">
                     <WokringListComponent listDetails={sampleList[currentList - 1]} />
