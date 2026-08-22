@@ -2,10 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, FieldErrors } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, registerSchema } from "../schema/authFormSchema";
+import Input from "./InputComponent";
 
 type LoginData = z.infer<typeof loginSchema>;
 type RegisterData = z.infer<typeof registerSchema>;
@@ -41,84 +42,34 @@ export default function Authenticate() {
             {/* <h1 className="">{isLogin ? "Login" : "Register"}</h1> */}
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between items-center gap-2 min-h-[50%]">
                 <div className="flex flex-col gap-2 items-center justify-center">
-                    <div className="w-full flex justify-between flex-col">
-                        {/* <span>Email : </span> */}
-                        <input
-                            type="email"
-                            className={`border-b px-2 py-1 outline-none ${errors.email
-                                ? "border-red-500"
-                                : "border-gray-300"
-                                }`}
-                            {...register("email")}
-                            placeholder="Enter Your Email"
-                        />
 
-                        {errors.email && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {errors.email.message}
-                            </p>
-                        )}
-
-                    </div>
-                    <div className="w-full flex justify-between flex-col">
-                        {/* <span>Name : </span> */}
-                        <input
-                            type="text"
-                            className={`border-b px-2 py-1 outline-none ${errors.name
-                                ? "border-red-500"
-                                : "border-gray-300"
-                                }`}
-                            {...register("name")}
-                            placeholder="Enter Your name"
-                        />
-
-                        {errors.name && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {errors.name.message}
-                            </p>
-                        )}
-
-                    </div>
-                    <div className="w-full flex justify-between flex-col">
-                        {/* <span>Password : </span> */}
-                        <input
+                    <Input
+                        type="email"
+                        placeholder="Enter Your Email"
+                        registration={register("email")}
+                        error={errors.email}
+                    />
+                    <Input
+                        type="text"
+                        placeholder="Enter Your Name"
+                        registration={register("name")}
+                        error={errors.name}
+                    />
+                    <Input
+                        type="password"
+                        placeholder="Enter Your Password"
+                        registration={register("password")}
+                        error={errors.password}
+                    />
+                    {/* Confirm Password Only for register mode */}
+                    {!isLogin && (
+                        <Input
                             type="password"
-                            className={`border-b px-2 py-1 outline-none ${errors.password
-                                ? "border-red-500"
-                                : "border-gray-300"
-                                }`}
-                            {...register("password")}
-                            placeholder="Enter Your Password"
+                            placeholder="Confirm Your Password"
+                            registration={register("confirmPassword")}
+                            error={(errors as FieldErrors<RegisterData>).confirmPassword}
                         />
-
-                        {errors.password && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {errors.password.message}
-                            </p>
-                        )}
-                    </div>
-                    {!isLogin ?
-                        <div className="w-full flex justify-between flex-col">
-                            {/* <span>Confirm Password : </span> */}
-                            <input
-                                type="password"
-                                className={`border-b px-2 py-1 outline-none ${"confirmPassword" in errors && errors.confirmPassword
-                                    ? "border-red-500"
-                                    : "border-gray-300"
-                                    }`}
-                                {...register("confirmPassword")}
-                                placeholder="Confirm Your Password"
-                            />
-
-                            {"confirmPassword" in errors &&
-                                errors.confirmPassword && (
-                                    <p className="text-red-500 text-xs mt-1">
-                                        {errors.confirmPassword.message}
-                                    </p>
-                                )}
-                        </div>
-                        : ""
-                    }
+                    )}
                 </div>
 
                 <div className="flex flex-col mt-5">
