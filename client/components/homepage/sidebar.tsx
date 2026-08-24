@@ -3,10 +3,12 @@
 import useTodoStore from "@/store/todoStore";
 import { TodoList } from "@/types/todo";
 import { LogOut } from "lucide-react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SideBarHome() {
+
+    const router = useRouter();
 
     const { lists, activeListId, setActiveList, addList } = useTodoStore();
     const [newListName, setNewListName] = useState("");
@@ -28,7 +30,7 @@ export default function SideBarHome() {
             <div className="w-full flex justify-between">
                 <span className="font-bold text-xl">Akshat Pratyush</span>
                 <button className="scale-[0.75] cursor-pointer" onClick={() => {
-                    redirect("/")
+                    router.push("/")
                 }}>
                     <LogOut />
                 </button>
@@ -38,8 +40,8 @@ export default function SideBarHome() {
             <div className="w-full border border-gray-200"></div>
 
             {/* List navigation and components */}
-            <div className="text-md flex flex-col items-start gap-2">
-                <span className="font-bold text-gray-500">MY LISTS</span>
+            <span className="font-bold text-gray-500">MY LISTS</span>
+            <div className="text-md flex flex-col items-start gap-2 -mt-2 overflow-y-auto">
 
                 {lists.map((list: TodoList) => (
                     <button key={list.id} className={`text-[14px] px-3 cursor-pointer hover:bg-gray-200 w-full py-1 text-start rounded-md ${list.id === activeListId ? "bg-gray-200" : ""}`}
