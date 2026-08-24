@@ -62,7 +62,7 @@ export default function ListStatsComponent() {
             <div className="flex flex-col flex-1 gap-2 p-3 font-semibold text-gray-400 overflow-y-auto">
                 {Object.entries(tagCounts).map(([tag, count]) => (
                     <div className="flex justify-between" key={tag}>
-                        <p>#{tag}</p>
+                        <p className="truncate">#{tag}</p>
                         <p className="text-black">{count}</p>
                     </div>))}
 
