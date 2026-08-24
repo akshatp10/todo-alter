@@ -72,10 +72,12 @@ export default function WokringListComponent() {
                             />
                         </div>
                         <div className="flex-1 min-w-0">
-                            {item.item_name}
+                            <span className="block w-full wrap-break-word">
+                                {item.item_name}
+                            </span>
                             <div className="flex flex-wrap gap-1.5 text-xs">
                                 {item.tags.map((tag: string) => (
-                                    <span className="bg-gray-100 px-2 mr-2 rounded-xs" key={tag}>
+                                    <span className="bg-gray-100 px-2 mr-2 rounded-xs truncate" key={tag}>
                                         #{tag}
                                     </span>
                                 ))}
