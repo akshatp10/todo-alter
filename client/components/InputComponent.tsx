@@ -1,7 +1,7 @@
 import { FieldError, UseFormRegisterReturn } from "react-hook-form";
 
 type InputProps = {
-    type?: React.HTMLInputTypeAttribute;
+    type: React.HTMLInputTypeAttribute;
     placeholder: string;
     registration: UseFormRegisterReturn;
     error?: FieldError;

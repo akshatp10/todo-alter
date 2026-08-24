@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, SubmitHandler, FieldErrors } from "react-hook-form";
 import { z } from "zod";
@@ -12,6 +12,8 @@ type LoginData = z.infer<typeof loginSchema>;
 type RegisterData = z.infer<typeof registerSchema>;
 
 export default function Authenticate() {
+
+    const router = useRouter();
 
     const [isLogin, setIsLogin] = useState<boolean>(true)
 
@@ -28,7 +30,7 @@ export default function Authenticate() {
         else {
             console.log(data)
         }
-        redirect('/home')
+        router.push('/home')
     }
 
     const toggleAuthMode = () => {
