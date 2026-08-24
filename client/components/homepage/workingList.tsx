@@ -32,22 +32,25 @@ export default function WokringListComponent() {
 
 
             {/* Top Title and New Item */}
-            <div className="flex w-full justify-between p-3">
+            <div className="flex w-full min-w-0 justify-between p-3">
 
-                <div className="text-3xl font-bold flex gap-4 items-center">
-                    {!updateState ? currentList?.listName :
-                        <input type="text" onChange={(e) => setNewTitle(e.target.value)} onKeyDown={(e) => {
+                <div className="text-3xl font-bold flex flex-1 min-w-0 gap-2 items-center">
+                    {!updateState ?
+                        <span className="min-w-0 truncate">
+                            {currentList?.listName}
+                        </span> :
+                        <input type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} onKeyDown={(e) => {
                             if (e.key === "Enter") {
                                 handleUpdateTitle();
                             }
                         }} />
                     }
                     {/* {currentList?.listName} */}
-                    <button onClick={() => { setupdateState(!updateState) }}>
+                    <button className="shrink-0" onClick={() => { setupdateState(!updateState) }}>
                         <Pencil width={20} className="mt-1 text-gray-500" />
                     </button>
                 </div>
-                <button className="bg-black text-white px-4 cursor-pointer flex justify-center items-center gap-2 rounded-md" onClick={handleClickNewItem}>
+                <button className="shrink-0 bg-black text-white px-4 cursor-pointer flex justify-center items-center gap-2 rounded-md" onClick={handleClickNewItem}>
                     <Plus className="w-3.5" /> New Task
                 </button>
             </div >
@@ -56,15 +59,15 @@ export default function WokringListComponent() {
             {
                 currentList?.items?.length > 0 ? currentList.items.map((item: Task) => (
                     <div className="flex w-full gap-2 py-10 border-b border-gray-200" key={item.id}>
-                        <div className="w-[5%] flex justify-end">
+                        <div className="shrink-0">
                             <input type="checkbox" name="checkTask"
                                 checked={item.status === "completed"}
                                 onChange={() => toggleTask(item.id)}
                             />
                         </div>
-                        <div className="flex flex-col w-[95%]">
+                        <div className="flex-1 min-w-0">
                             {item.item_name}
-                            <div className="flex text-xs">
+                            <div className="flex flex-wrap gap-1.5 text-xs">
                                 {item.tags.map((tag: string) => (
                                     <span className="bg-gray-100 px-2 mr-2 rounded-xs" key={tag}>
                                         #{tag}
