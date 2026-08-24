@@ -46,7 +46,9 @@ export default function SideBarHome() {
                 {lists.map((list: TodoList) => (
                     <button key={list.id} className={`text-[14px] px-3 cursor-pointer hover:bg-gray-200 w-full py-1 text-start rounded-md ${list.id === activeListId ? "bg-gray-200" : ""}`}
                         onClick={() => { setActiveList(list.id) }}>
-                        {list.listName}
+                        <span className="block w-full truncate">
+                            {list.listName}
+                        </span>
                     </button>
                 ))}
 
