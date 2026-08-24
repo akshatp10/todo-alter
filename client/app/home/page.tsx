@@ -13,7 +13,7 @@ export default function HomePage() {
                 <div className="flex flex-col gap-4 border-r border-gray-200 bg-gray-100 w-1/3 p-4">
                     <SideBarHome />
                 </div>
-                <div className="flex flex-col w-2/3 p-4">
+                <div className="flex flex-col w-2/3 p-4 overflow-y-scroll">
                     <WokringListComponent />
                 </div>
                 <div className="flex flex-col w-1/3 border-l border-gray-200 p-4">
