@@ -12,10 +12,14 @@ type UserActions = {
 
 type UserStore = UserState & UserActions;
 
+const initialState: UserState = {
+	name: null,
+};
+
 const useUserStore = create<UserStore>()(
 	persist(
 		(set) => ({
-			name: null,
+			...initialState,
 			login: (user) => set(() => ({ name: user })),
 			logout: () => set(() => ({ name: null })),
 		}),
