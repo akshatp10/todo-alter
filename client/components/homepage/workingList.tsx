@@ -15,7 +15,7 @@ export default function WokringListComponent() {
 
     const { lists, activeListId, toggleTask, updateListTitle } = useTodoStore();
 
-    const currentList: TodoList = lists.find((list) => (list.id === activeListId))!;
+    const currentList: TodoList = lists.find((list: TodoList) => (list.id === activeListId))!;
     const [newTitle, setNewTitle] = useState<string>(currentList.listName)
 
     const handleUpdateTitle = () => {
