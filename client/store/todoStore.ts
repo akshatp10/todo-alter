@@ -15,6 +15,7 @@ type TodoActions = {
 	addTask: (item_name: string, tags?: string[]) => void;
 	toggleTask: (taskId: number) => void;
 	setActiveList: (listId: number) => void;
+	updateListTitle: (list_name: string) => void;
 };
 
 type TodoStore = TodoStates & TodoActions;
@@ -106,6 +107,18 @@ const useTodoStore = create<TodoStore>()(
 				}),
 
 			setActiveList: (listId) => set(() => ({ activeListId: listId })),
+
+			updateListTitle: (list_name) =>
+				set((state) => ({
+					lists: state.lists.map((list) => {
+						if (list.id !== state.activeListId) return list;
+
+						return {
+							...list,
+							listName: list_name,
+						};
+					}),
+				})),
 		}),
 		{
 			name: "todo-storage",

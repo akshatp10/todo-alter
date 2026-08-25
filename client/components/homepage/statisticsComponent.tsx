@@ -1,15 +1,37 @@
 "use client";
 
+import useTodoStore from "@/store/todoStore";
 import { useEffect, useState } from "react";
 
-export default function ListStatsComponent({ listDetails }: any) {
+export default function ListStatsComponent() {
+
+    const { lists, activeListId } = useTodoStore();
 
     const [publicAccess, setPublicAccess] = useState<boolean>(false)
+    const activeList = lists.find((list) => list.id === activeListId);
+
+    const items = activeList?.items ?? [];
+
+    const totalTasks = items.length;
+    const pendingTasks = items.filter(
+        (item) => item.status === "pending"
+    ).length;
+    const completedTasks = totalTasks - pendingTasks;
 
     useEffect(() => {
-        setPublicAccess(false)
-    }, [listDetails])
+        setPublicAccess(false);
+    }, [activeListId]);
 
+    const tagCounts = items.reduce<Record<string, number>>(
+        (acc, item) => {
+            item.tags.forEach((tag) => {
+                acc[tag] = (acc[tag] || 0) + 1;
+            });
+
+            return acc;
+        },
+        {}
+    );
 
     return (
         <>
@@ -20,15 +42,15 @@ export default function ListStatsComponent({ listDetails }: any) {
                 <div className="flex flex-col gap-2 p-3 font-semibold">
                     <div className="flex justify-between">
                         <p>Total Tasks</p>
-                        <p>{listDetails.items.length}</p>
+                        <p>{totalTasks}</p>
                     </div>
                     <div className="flex justify-between">
                         <p>Pending</p>
-                        <p className="text-red-500">{listDetails.items.filter((item: { status: string; }) => item.status === "pending").length}</p>
+                        <p className="text-red-500">{pendingTasks}</p>
                     </div>
                     <div className="flex justify-between">
                         <p>Completed</p>
-                        <p className="text-green-500">{listDetails.items.filter((item: { status: string; }) => item.status === "completed").length}</p>
+                        <p className="text-green-500">{completedTasks}</p>
                     </div>
                 </div>
 
@@ -37,21 +59,17 @@ export default function ListStatsComponent({ listDetails }: any) {
 
                 {/* Tags */}
                 <div className="flex flex-col gap-2 p-3 font-semibold text-gray-400">
-                    <div className="flex justify-between">
-                        <p>#important</p>
-                        <p className="text-black">0</p>
-                    </div>
-                    <div className="flex justify-between">
-                        <p>#time-sensitive</p>
-                        <p className="text-black">0</p>
-                    </div>
-                    <div className="flex justify-between">
-                        <p>#healthy</p>
-                        <p className="text-black">0</p>
-                    </div>
+                    {Object.entries(tagCounts).map(([tag, count]) => (
+                        <div className="flex justify-between" key={tag}>
+                            <p>#{tag}</p>
+                            <p className="text-black">{count}</p>
+                        </div>))}
+
                     <div className="flex justify-between">
                         <p>No Tag</p>
-                        <p className="text-black">0</p>
+                        <p className="text-black">
+                            {items.filter((item) => item.tags.length === 0).length}
+                        </p>
                     </div>
                 </div>
             </div>
