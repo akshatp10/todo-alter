@@ -22,8 +22,6 @@ export default function SideBarHome() {
         setNewListName("");
     };
 
-
-
     return (
         <>
             {/* Username and signout */}
@@ -43,9 +41,13 @@ export default function SideBarHome() {
             <span className="font-bold text-gray-500">MY LISTS</span>
             <div className="text-md flex flex-col items-start gap-2 -mt-2 overflow-y-auto">
 
-                {lists.map((list: TodoList) => (
-                    <button key={list.id} className={`text-[14px] px-3 cursor-pointer hover:bg-gray-200 w-full py-1 text-start rounded-md ${list.id === activeListId ? "bg-gray-200" : ""}`}
-                        onClick={() => { setActiveList(list.id) }}>
+                {Object.values(lists).map((list: TodoList) => (
+                    <button
+                        key={list.id}
+                        className={`text-[14px] px-3 cursor-pointer hover:bg-gray-200 w-full py-1 text-start rounded-md ${list.id === activeListId ? "bg-gray-200" : ""
+                            }`}
+                        onClick={() => setActiveList(list.id)}
+                    >
                         <span className="block w-full truncate">
                             {list.listName}
                         </span>

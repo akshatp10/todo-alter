@@ -2,9 +2,9 @@
 
 import { Pencil, Plus } from "lucide-react";
 import NewListItemComponent from "./newList";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useTodoStore from "@/store/todoStore";
-import { Task, TodoList } from "@/types/todo";
+import { Task } from "@/types/todo";
 
 export default function WokringListComponent() {
     const [newItem, setNewItem] = useState(false)
@@ -15,14 +15,8 @@ export default function WokringListComponent() {
 
     const { lists, activeListId, toggleTask, updateListTitle } = useTodoStore();
 
-    const currentList: TodoList = lists.find((list: TodoList) => (list.id === activeListId))!;
+    const currentList = lists[activeListId!]
     const [newTitle, setNewTitle] = useState<string>("")
-
-    useEffect(() => {
-        setNewTitle(currentList.listName)
-        setupdateState(false)
-    }, [currentList])
-
 
     const handleUpdateTitle = () => {
         if (!newTitle.trim() || !currentList) return;
