@@ -16,7 +16,7 @@ type RegisterData = z.infer<typeof registerSchema>;
 export default function Authenticate() {
 
     const router = useRouter();
-    const { login } = useUserStore();
+    const login = useUserStore((state) => state.login);
     const [isLogin, setIsLogin] = useState<boolean>(true)
 
     const { register, handleSubmit, reset, formState: { errors }, } = useForm<LoginData | RegisterData>(
