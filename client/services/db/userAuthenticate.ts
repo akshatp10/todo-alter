@@ -1,7 +1,7 @@
 import { createUser, getUserByEmail } from "@/db/users";
 import { loginSchema, registerSchema } from "@/schema/authFormSchema";
 import z from "zod";
-import { ApiResponse } from "./types/apiResponseType";
+import { ApiResponse } from "../types/apiResponseType";
 
 type LoginData = z.infer<typeof loginSchema>;
 type RegisterData = z.infer<typeof registerSchema>;

@@ -28,6 +28,7 @@ const authSchema = z.object({
 
 export const loginSchema = authSchema.omit({
 	confirmPassword: true,
+	name: true,
 });
 
 export const registerSchema = authSchema.refine(
