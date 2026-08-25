@@ -18,6 +18,7 @@ export interface Task {
 	listId: number;
 	taskName: string;
 	tags: string[];
+	status: "completed" | "pending";
 }
 
 interface TodoDB extends DBSchema {

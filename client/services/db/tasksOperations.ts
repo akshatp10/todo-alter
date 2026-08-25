@@ -3,10 +3,14 @@ import { Task } from "@/db/databaseTypes";
 import { ApiResponse } from "../types/apiResponseType";
 
 export const createNewTask = async (
-	task: Omit<Task, "id">,
+	task: Omit<Task, "id" | "status">,
 ): Promise<ApiResponse<number>> => {
 	try {
-		const taskId = await createTask(task);
+		const taskWithDefaultStatus: Task = {
+			...task,
+			status: "pending",
+		};
+		const taskId = await createTask(taskWithDefaultStatus);
 
 		return {
 			status: 201,
