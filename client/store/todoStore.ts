@@ -20,13 +20,7 @@ type TodoActions = {
 type TodoStore = TodoStates & TodoActions;
 
 const initialList: Record<number, TodoList> = Object.fromEntries(
-	sampleList.map((list) => [
-		list.id,
-		{
-			...list,
-			nextTaskId: Math.max(0, ...list.items.map((item) => item.id)) + 1,
-		},
-	]),
+	sampleList.map((list) => [list.id, list]),
 );
 
 const initialState: TodoStates = {

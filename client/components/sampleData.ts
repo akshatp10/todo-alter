@@ -18,6 +18,7 @@ const sampleList: TodoList[] = [
 				tags: ["healthy", "time-sensitive"],
 			},
 		],
+		nextTaskId: 3,
 	},
 	{
 		id: 2,
@@ -42,6 +43,7 @@ const sampleList: TodoList[] = [
 				tags: ["healthy"],
 			},
 		],
+		nextTaskId: 4,
 	},
 	{
 		id: 3,
@@ -78,6 +80,7 @@ const sampleList: TodoList[] = [
 				tags: ["healthy"],
 			},
 		],
+		nextTaskId: 6,
 	},
 ];
 
