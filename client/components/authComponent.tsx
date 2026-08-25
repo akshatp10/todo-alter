@@ -61,7 +61,6 @@ export default function Authenticate() {
     };
 
     return (
-        // Need to fix the code
         <div className="w-[50%] min-h-[50%] rounded-4xl flex flex-col justify-between items-center">
             {/* <h1 className="">{isLogin ? "Login" : "Register"}</h1> */}
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between items-center gap-2 min-h-[50%]">

@@ -1,16 +1,18 @@
 "use client";
 
+import { getUser } from "@/db/users";
 import useTodoStore from "@/store/todoStore";
+import useUserStore from "@/store/userStore";
 import { TodoList } from "@/types/todo";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 export default function SideBarHome() {
 
     const router = useRouter();
-
+    const { userId, logout } = useUserStore();
     const { lists, activeListId } = useTodoStore(
         useShallow((state) => ({
             lists: state.lists,
@@ -22,6 +24,21 @@ export default function SideBarHome() {
     const addList = useTodoStore((state) => state.addList);
 
     const [newListName, setNewListName] = useState("");
+    const [userName, setUserName] = useState("");
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            if (userId !== null) {
+                const user = await getUser(userId);
+                setUserName(user?.name ?? "");
+            }
+        };
+
+        fetchUser();
+
+        // if (userId === null)
+        //     router.push('/')
+    }, [userId]);
 
     const handleNewList = () => {
         const name = newListName.trim();
@@ -32,13 +49,18 @@ export default function SideBarHome() {
         setNewListName("");
     };
 
+    const handleLogOut = () => {
+        logout();
+        router.push('/')
+    }
+
     return (
         <>
             {/* Username and signout */}
             <div className="w-full flex justify-between">
-                <span className="font-bold text-xl">Akshat Pratyush</span>
+                <span className="font-bold text-xl">{userName}</span>
                 <button className="scale-[0.75] cursor-pointer" onClick={() => {
-                    router.push("/")
+                    handleLogOut()
                 }}>
                     <LogOut />
                 </button>
