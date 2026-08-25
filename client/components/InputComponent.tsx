@@ -14,7 +14,7 @@ export default function Input({
     error,
 }: InputProps) {
     return (
-        <div className="w-full flex flex-col">
+        <div className="w-full flex flex-col gap-1">
             <input
                 type={type}
                 {...registration}
@@ -24,7 +24,7 @@ export default function Input({
             />
 
             {error && (
-                <p className="text-red-500 text-xs mt-1">
+                <p className="text-red-500 text-xs">
                     {error.message}
                 </p>
             )}
