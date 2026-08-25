@@ -1,4 +1,6 @@
-const sampleList = [
+import { TodoList } from "@/types/todo";
+
+const sampleList: TodoList[] = [
 	{
 		id: 1,
 		listName: "Groceries",
@@ -16,6 +18,7 @@ const sampleList = [
 				tags: ["healthy", "time-sensitive"],
 			},
 		],
+		nextTaskId: 3,
 	},
 	{
 		id: 2,
@@ -40,6 +43,7 @@ const sampleList = [
 				tags: ["healthy"],
 			},
 		],
+		nextTaskId: 4,
 	},
 	{
 		id: 3,
@@ -76,6 +80,7 @@ const sampleList = [
 				tags: ["healthy"],
 			},
 		],
+		nextTaskId: 6,
 	},
 ];
 
