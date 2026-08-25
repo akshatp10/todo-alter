@@ -109,16 +109,23 @@ const useTodoStore = create<TodoStore>()(
 			setActiveList: (listId) => set(() => ({ activeListId: listId })),
 
 			updateListTitle: (list_name) =>
-				set((state) => ({
-					lists: state.lists.map((list) => {
-						if (list.id !== state.activeListId) return list;
+				set((state) => {
+					if (state.activeListId === null) return state;
 
-						return {
-							...list,
-							listName: list_name,
-						};
-					}),
-				})),
+					const list = state.lists[state.activeListId];
+
+					if (!list) return state;
+
+					return {
+						lists: {
+							...state.lists,
+							[state.activeListId]: {
+								...list,
+								listName: list_name,
+							},
+						},
+					};
+				}),
 		}),
 		{
 			name: "todo-storage",
