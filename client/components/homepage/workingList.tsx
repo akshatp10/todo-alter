@@ -5,15 +5,24 @@ import NewListItemComponent from "./newList";
 import { useState } from "react";
 import useTodoStore from "@/store/todoStore";
 import { Task } from "@/types/todo";
+import { useShallow } from "zustand/shallow";
 
 export default function WokringListComponent() {
     const [newItem, setNewItem] = useState(false)
     const [updateState, setupdateState] = useState(false)
     const handleClickNewItem = () => {
         setNewItem(true)
-    }
 
-    const { lists, activeListId, toggleTask, updateListTitle } = useTodoStore();
+    }
+    const { lists, activeListId, toggleTask, updateListTitle } = useTodoStore(
+        useShallow((state) => ({
+            lists: state.lists,
+            activeListId: state.activeListId,
+            toggleTask: state.toggleTask,
+            updateListTitle: state.updateListTitle,
+        }))
+    );
+
 
     const currentList = lists[activeListId!]
     const [newTitle, setNewTitle] = useState<string>("")
@@ -67,7 +76,7 @@ export default function WokringListComponent() {
 
             {/* Showing the list items */}
             {
-                currentList?.items?.length > 0 ? currentList.items.map((item: Task) => (
+                currentList.items.length > 0 ? currentList.items.map((item: Task) => (
                     <div className="flex w-full gap-2 py-10 border-b border-gray-200" key={item.id}>
                         <div className="shrink-0">
                             <input type="checkbox" name="checkTask"

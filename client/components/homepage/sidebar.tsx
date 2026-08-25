@@ -5,12 +5,22 @@ import { TodoList } from "@/types/todo";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useShallow } from "zustand/shallow";
 
 export default function SideBarHome() {
 
     const router = useRouter();
 
-    const { lists, activeListId, setActiveList, addList } = useTodoStore();
+    const { lists, activeListId } = useTodoStore(
+        useShallow((state) => ({
+            lists: state.lists,
+            activeListId: state.activeListId,
+        }))
+    );
+
+    const setActiveList = useTodoStore((state) => state.setActiveList);
+    const addList = useTodoStore((state) => state.addList);
+
     const [newListName, setNewListName] = useState("");
 
     const handleNewList = () => {

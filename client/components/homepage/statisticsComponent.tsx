@@ -2,10 +2,13 @@
 
 import useTodoStore from "@/store/todoStore";
 import { useState } from "react";
+import { useShallow } from "zustand/shallow";
 
 export default function ListStatsComponent() {
 
-    const { lists, activeListId } = useTodoStore();
+    const { lists, activeListId } = useTodoStore(
+        useShallow((state) => ({ lists: state.lists, activeListId: state.activeListId }))
+    );
 
     const [publicAccess, setPublicAccess] = useState<boolean>(false)
     const activeList = lists[activeListId!];
