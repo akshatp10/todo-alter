@@ -11,4 +11,5 @@ export interface TodoList {
 	id: number;
 	listName: string;
 	items: Task[];
+	nextTaskId: number;
 }

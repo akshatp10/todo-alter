@@ -4,8 +4,10 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type TodoStates = {
-	lists: TodoList[];
+	// lists: TodoList[];
+	lists: Record<number, TodoList>;
 	activeListId: number | null;
+	nextListId: number;
 };
 
 type TodoActions = {
@@ -17,9 +19,20 @@ type TodoActions = {
 
 type TodoStore = TodoStates & TodoActions;
 
+const initialList: Record<number, TodoList> = Object.fromEntries(
+	sampleList.map((list) => [
+		list.id,
+		{
+			...list,
+			nextTaskId: Math.max(0, ...list.items.map((item) => item.id)) + 1,
+		},
+	]),
+);
+
 const initialState: TodoStates = {
-	lists: sampleList,
+	lists: initialList,
 	activeListId: sampleList[0]?.id ?? null,
+	nextListId: Math.max(0, ...sampleList.map((list) => list.id)) + 1,
 };
 
 const useTodoStore = create<TodoStore>()(
@@ -28,67 +41,75 @@ const useTodoStore = create<TodoStore>()(
 			...initialState,
 			addList: (name) =>
 				set((state) => {
-					const newId =
-						Math.max(0, ...state.lists.map((list) => list.id)) + 1;
-
 					const newList: TodoList = {
-						id: newId,
+						id: state.nextListId,
 						listName: name,
 						items: [],
+						nextTaskId: 1,
 					};
 
 					return {
-						lists: [...state.lists, newList],
-						activeListId: newId,
+						lists: { ...state.lists, [newList.id]: newList },
+						activeListId: newList.id,
+						nextListId: state.nextListId + 1,
 					};
 				}),
 
 			addTask: (item_name, tags) =>
-				set((state) => ({
-					lists: state.lists.map((list) => {
-						if (list.id !== state.activeListId) return list;
+				set((state) => {
+					if (state.activeListId === null) return state;
 
-						const newId =
-							Math.max(0, ...list.items.map((item) => item.id)) +
-							1;
+					const list = state.lists[state.activeListId];
 
-						const newTask: Task = {
-							id: newId,
-							item_name: item_name,
-							status: "pending",
-							tags: tags ? tags : [],
-						};
+					if (!list) return state;
 
-						return {
-							...list,
-							items: [...list.items, newTask],
-						};
-					}),
-				})),
+					const newTask: Task = {
+						id: list.nextTaskId,
+						item_name,
+						status: "pending",
+						tags: tags ?? [],
+					};
+
+					return {
+						lists: {
+							...state.lists,
+							[list.id]: {
+								...list,
+								items: [...list.items, newTask],
+								nextTaskId: list.nextTaskId + 1,
+							},
+						},
+					};
+				}),
 
 			toggleTask: (taskId) =>
-				set((state) => ({
-					lists: state.lists.map((list) => {
-						if (list.id !== state.activeListId) {
-							return list;
-						}
+				set((state) => {
+					if (state.activeListId === null) return state;
 
-						return {
-							...list,
-							items: list.items.map((item) =>
-								item.id === taskId
-									? {
-											...item,
-											status:
-												item.status === "completed"
-													? "pending"
-													: "completed",
-										}
-									: item,
-							),
-						};
-					}),
-				})),
+					const list = state.lists[state.activeListId];
+
+					if (!list) return state;
+
+					return {
+						lists: {
+							...state.lists,
+							[list.id]: {
+								...list,
+								items: list.items.map((item) =>
+									item.id === taskId
+										? {
+												...item,
+												status:
+													item.status === "completed"
+														? "pending"
+														: "completed",
+											}
+										: item,
+								),
+							},
+						},
+					};
+				}),
 
 			setActiveList: (listId) => set(() => ({ activeListId: listId })),
 		}),
