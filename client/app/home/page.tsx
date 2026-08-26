@@ -107,7 +107,7 @@ export default function HomePage() {
 
             {/* Statistics */}
             <div className="flex-1 min-w-0 flex flex-col border-l border-gray-200 p-4">
-                <ListStatsComponent />
+                <ListStatsComponent tasks={tasks} />
             </div>
         </div>
     );
