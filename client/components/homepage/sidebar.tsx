@@ -82,6 +82,7 @@ export default function SideBarHome({ lists, setLists, userId, activeListId }: S
 
     const handleLogOut = () => {
         logout();
+        setActiveList(null);
         router.push("/");
     };
 
