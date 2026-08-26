@@ -26,7 +26,6 @@ export default function SideBarHome() {
     const [userName, setUserName] = useState("");
     const [allLists, setAllLists] = useState<List[]>([]);
 
-
     //Fetching user name from userID and Fetching all the Lists present in the db on user change
     const fetchUser = async (userId: number) => {
         const user = await getUser(userId);
@@ -71,10 +70,11 @@ export default function SideBarHome() {
         const createListResponse = await createUserList(newList);
 
         if (createListResponse.success === true) {
+            if (createListResponse.data?.id === undefined) return;
             setNewListName("");
-            setActiveList(createListResponse.data?.id!)
+            setActiveList(createListResponse.data?.id)
             // if (createListResponse.data?.id)
-            setAllLists((prev) => [...prev, { ...newList, id: createListResponse.data?.id, },]);
+            setAllLists((prev) => [...prev, { ...newList, id: createListResponse.data?.id },]);
         }
 
     };
