@@ -121,7 +121,7 @@ export default function WokringListComponent(props: WokringListComponentProps) {
             {/* Showing the list items */}
             {
                 Object.values(tasks).length > 0 ? Object.values(tasks).map((task: Task) => (
-                    <div className="flex w-full gap-2 py-10 border-b border-gray-200" key={task.id}>
+                    <div className="flex w-full gap-2 py-10 border-b border-gray-200" key={task.taskName}>
                         <div className="shrink-0">
                             <input type="checkbox" name="checkTask"
                                 checked={task.status === "completed"}
