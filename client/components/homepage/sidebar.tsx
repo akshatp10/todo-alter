@@ -1,9 +1,10 @@
 "use client";
 
+import { List } from "@/db/databaseTypes";
 import { getUser } from "@/db/users";
+import { createUserList, getAllUserList } from "@/services/db/listOperations";
 import useTodoStore from "@/store/todoStore";
 import useUserStore from "@/store/userStore";
-import { TodoList } from "@/types/todo";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,40 +14,69 @@ export default function SideBarHome() {
 
     const router = useRouter();
     const { userId, logout } = useUserStore(useShallow((state) => ({ userId: state.userId, logout: state.logout })));
-    const { lists, activeListId } = useTodoStore(
+    const { activeListId } = useTodoStore(
         useShallow((state) => ({
-            lists: state.lists,
             activeListId: state.activeListId,
         }))
     );
 
     const setActiveList = useTodoStore((state) => state.setActiveList);
-    const addList = useTodoStore((state) => state.addList);
 
     const [newListName, setNewListName] = useState("");
     const [userName, setUserName] = useState("");
+    const [allLists, setAllLists] = useState<List[]>([]);
 
+
+    //Fetching user name from userID and Fetching all the Lists present in the db on user change
+    const fetchUser = async (userId: number) => {
+        const user = await getUser(userId);
+        setUserName(user?.name ?? "");
+    };
+
+    const fetchAllLists = async (userId: number) => {
+        const userLists = await getAllUserList(userId);
+
+        if (userLists.success) {
+            setAllLists(userLists.data ?? []);
+        }
+    };
+
+
+    //useEffect to fetch the user's data ie name and lists from db when component renders and user changes
     useEffect(() => {
-        const fetchUser = async () => {
-            if (userId !== null) {
-                const user = await getUser(userId);
-                setUserName(user?.name ?? "");
-            }
+        if (userId === null) return;
+
+        const fetchUserData = async () => {
+            await Promise.all([
+                fetchUser(userId),
+                fetchAllLists(userId),
+            ]);
         };
 
-        fetchUser();
+        fetchUserData();
 
         // if (userId === null)
         //     router.push('/')
     }, [userId]);
 
-    const handleNewList = () => {
+    //Creating a new list
+    const handleNewList = async () => {
         const name = newListName.trim();
 
         if (!name) return;
+        if (userId === null) return;
 
-        addList(name);
-        setNewListName("");
+        const newList: List = { listName: name, userId: userId }
+
+        const createListResponse = await createUserList(newList);
+
+        if (createListResponse.success === true) {
+            setNewListName("");
+            setActiveList(createListResponse.data?.id!)
+            // if (createListResponse.data?.id)
+            setAllLists((prev) => [...prev, { ...newList, id: createListResponse.data?.id, },]);
+        }
+
     };
 
     const handleLogOut = () => {
@@ -73,12 +103,12 @@ export default function SideBarHome() {
             <span className="font-bold text-gray-500">MY LISTS</span>
             <div className="text-md flex flex-col items-start gap-2 -mt-2 overflow-y-auto">
 
-                {Object.values(lists).map((list: TodoList) => (
+                {allLists.map((list: List) => (
                     <button
                         key={list.id}
                         className={`text-[14px] px-3 cursor-pointer hover:bg-gray-200 w-full py-1 text-start rounded-md ${list.id === activeListId ? "bg-gray-200" : ""
                             }`}
-                        onClick={() => setActiveList(list.id)}
+                        onClick={() => setActiveList(list.id!)}
                     >
                         <span className="block w-full truncate">
                             {list.listName}
