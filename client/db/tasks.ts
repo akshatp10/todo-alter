@@ -15,7 +15,7 @@ export async function getTasksByList(listId: number) {
 	return db.getAllFromIndex("tasks", "listId", listId);
 }
 
-export async function toggleTaskStatus(task: Task) {
+export async function updateSingleTask(task: Task) {
 	const db = await getDatabase();
 	return db.put("tasks", task);
 }

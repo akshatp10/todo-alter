@@ -4,7 +4,7 @@ import {
 	deleteSingleTask,
 	getTaskById,
 	getTasksByList,
-	toggleTaskStatus,
+	updateSingleTask,
 } from "@/db/tasks";
 import { Task } from "@/db/databaseTypes";
 import { ApiResponse } from "../types/apiResponseType";
@@ -61,7 +61,7 @@ export const getAllTasksByList = async (
 	}
 };
 
-export const toggleTask = async (task: Task): Promise<ApiResponse<Task>> => {
+export const updateTask = async (task: Task): Promise<ApiResponse<Task>> => {
 	try {
 		if (task.id === undefined) {
 			return {
@@ -72,11 +72,11 @@ export const toggleTask = async (task: Task): Promise<ApiResponse<Task>> => {
 			};
 		}
 
-		await toggleTaskStatus(task);
+		await updateSingleTask(task);
 
-		const updatedTask = await getTaskById(task.id);
+		const updatedTaskStatus = await getTaskById(task.id);
 
-		if (!updatedTask) {
+		if (!updatedTaskStatus) {
 			return {
 				status: 404,
 				success: false,
@@ -89,7 +89,7 @@ export const toggleTask = async (task: Task): Promise<ApiResponse<Task>> => {
 			status: 200,
 			success: true,
 			message: "Task updated successfully",
-			data: updatedTask,
+			data: updatedTaskStatus,
 		};
 	} catch (error) {
 		console.error("toggleTask error:", error);
