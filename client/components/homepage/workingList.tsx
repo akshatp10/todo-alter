@@ -2,76 +2,55 @@
 
 import { Pencil, Plus } from "lucide-react";
 import NewListItemComponent from "./newList";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useTodoStore from "@/store/todoStore";
-import { useShallow } from "zustand/shallow";
-import { getUserListById, updateUserList } from "@/services/db/listOperations";
+import { updateUserList } from "@/services/db/listOperations";
 import { List, Task } from "@/db/databaseTypes";
-import useUserStore from "@/store/userStore";
 
-export default function WokringListComponent() {
+interface WokringListComponentProps {
+    curList: List | undefined;
+    setLists: React.Dispatch<React.SetStateAction<Record<number, List>>>;
+    userId: number | null;
+}
+
+export default function WokringListComponent(props: WokringListComponentProps) {
+
+    const { curList, setLists, userId } = { ...props }
+
     const [newItem, setNewItem] = useState(false)
     const [updateState, setupdateState] = useState(false)
     const handleClickNewItem = () => {
         setNewItem(true)
 
     }
-    const { activeListId, toggleTask } = useTodoStore(
-        useShallow((state) => ({
-            activeListId: state.activeListId,
-            toggleTask: state.toggleTask,
-        }))
+    const toggleTask = useTodoStore(
+        (state) => state.toggleTask
     );
-
-    const { userId } = useUserStore(useShallow((state) => ({ userId: state.userId })))
-
 
     const [tasks, setTasks] = useState<Task[]>([])
 
     const [newTitle, setNewTitle] = useState<string>("")
-    const [currentList, setCurrentList] = useState<List | null>(null);
 
-    useEffect(() => {
-        if (activeListId === null) return
-        const fetchListName = async () => {
-            const response = await getUserListById(activeListId)
-
-            if (response.success === true)
-                if (response.data)
-                    setCurrentList(response.data)
-
-        }
-
-        fetchListName();
-
-    }, [activeListId])
-
-
+    //Updating the list title and implementing it to the parent local state along with saving in db
     const handleUpdateTitle = async () => {
-        if (userId === null || activeListId === null) return
+        if (userId === null || curList === undefined) return
 
         if (!newTitle.trim()) return;
 
-        const list: List = {
+        const updatedList: List = {
+            ...curList,
             listName: newTitle.trim(),
-            userId: userId,
-            id: activeListId
         }
 
-        const updateListResponse = await updateUserList(list)
+        const updateListResponse = await updateUserList(updatedList)
 
-        // updateListTitle(newTitle.trim());
         if (updateListResponse.success === true) {
-            setCurrentList(prev =>
-                prev
-                    ? { ...prev, listName: newTitle.trim() }
-                    : prev
-            );
+            setLists((prev) => ({ ...prev, [curList.id!]: updatedList, }));
             setupdateState(false);
         }
     };
 
-    if (activeListId === null)
+    if (curList === undefined)
         return (
             <>
                 <div className="flex items-center justify-center py-16 text-sm text-gray-400 flex-col">
@@ -93,7 +72,7 @@ export default function WokringListComponent() {
                 <div className="text-3xl font-bold flex flex-1 min-w-0 gap-2 items-center">
                     {!updateState ?
                         <span className="min-w-0 truncate">
-                            {currentList?.listName}
+                            {curList.listName}
                         </span> :
                         <input type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} onKeyDown={(e) => {
                             if (e.key === "Enter") {
@@ -103,7 +82,7 @@ export default function WokringListComponent() {
                     }
                     {/* {currentList?.listName} */}
                     <button className="shrink-0" onClick={() => {
-                        setNewTitle(currentList?.listName ?? "")
+                        setNewTitle(curList.listName ?? "")
                         setupdateState(!updateState)
                     }}>
                         <Pencil width={20} className="mt-1 text-gray-500" />
