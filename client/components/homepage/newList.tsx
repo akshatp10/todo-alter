@@ -3,20 +3,25 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import useTodoStore from "@/store/todoStore";
+import { createNewTask } from "@/services/db/tasksOperations";
+import { Task } from "@/db/databaseTypes";
 
 type NewListItemProps = {
+    listId: number | undefined
     setNewItem: (value: boolean) => void;
+    setTasks: React.Dispatch<React.SetStateAction<Record<number, Task>>>;
 };
 
 export default function NewListItemComponent({
-    setNewItem,
+    setNewItem, listId, setTasks
 }: NewListItemProps) {
     const [itemName, setItemName] = useState("");
     const [tagsInput, setTagsInput] = useState("");
 
-    const addTask = useTodoStore((state) => state.addTask);
+    const handleAddItem = async () => {
 
-    const handleAddItem = () => {
+        if (listId === undefined) return;
+
         const trimmedItem = itemName.trim();
 
         if (!trimmedItem) return;
@@ -26,9 +31,20 @@ export default function NewListItemComponent({
             .map((tag) => tag.trim())
             .filter(Boolean);
 
-        addTask(trimmedItem, tags);
+        const task: Task = {
+            listId: listId,
+            status: "pending",
+            taskName: trimmedItem,
+            tags: tags
+        }
 
-        setNewItem(false);
+        const response = await createNewTask(task)
+
+        if (response.success && response.data) {
+            setTasks((prev) => ({ ...prev, [response.data!]: task, }));
+            setNewItem(false);
+        }
+
     };
 
     return (

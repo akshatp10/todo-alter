@@ -4,8 +4,9 @@ import SideBarHome from "@/components/homepage/sidebar";
 import ListStatsComponent from "@/components/homepage/statisticsComponent";
 import WokringListComponent from "@/components/homepage/workingList";
 
-import { List } from "@/db/databaseTypes";
+import { List, Task } from "@/db/databaseTypes";
 import { getAllUserList } from "@/services/db/listOperations";
+import { getAllTasksByList } from "@/services/db/tasksOperations";
 
 import useTodoStore from "@/store/todoStore";
 import useUserStore from "@/store/userStore";
@@ -23,6 +24,7 @@ export default function HomePage() {
     );
 
     const [lists, setLists] = useState<Record<number, List>>({});
+    const [tasks, setTasks] = useState<Record<number, Task>>({});
 
     useEffect(() => {
         if (userId === null) {
@@ -48,6 +50,33 @@ export default function HomePage() {
         fetchLists();
     }, [userId]);
 
+    useEffect(() => {
+        if (activeListId === null) {
+            return;
+        }
+
+        const fetchAllTasks = async () => {
+            const response = await getAllTasksByList(activeListId);
+
+            if (response.success && response.data) {
+                const taskById: Record<number, Task> = {};
+
+                for (const task of response.data) {
+                    if (task.id !== undefined) {
+                        taskById[task.id] = task;
+                    }
+                }
+
+                console.log(taskById);
+
+
+                setTasks(taskById);
+            }
+        }
+
+        fetchAllTasks();
+    }, [activeListId]);
+
     const currentList =
         activeListId !== null
             ? lists[activeListId]
@@ -71,6 +100,8 @@ export default function HomePage() {
                     curList={currentList}
                     setLists={setLists}
                     userId={userId}
+                    tasks={tasks}
+                    setTasks={setTasks}
                 />
             </div>
 

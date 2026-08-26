@@ -3,19 +3,21 @@
 import { Pencil, Plus } from "lucide-react";
 import NewListItemComponent from "./newList";
 import { useState } from "react";
-import useTodoStore from "@/store/todoStore";
 import { updateUserList } from "@/services/db/listOperations";
 import { List, Task } from "@/db/databaseTypes";
+import { toggleTask } from "@/services/db/tasksOperations";
 
 interface WokringListComponentProps {
     curList: List | undefined;
     setLists: React.Dispatch<React.SetStateAction<Record<number, List>>>;
     userId: number | null;
+    tasks: Record<number, Task>;
+    setTasks: React.Dispatch<React.SetStateAction<Record<number, Task>>>;
 }
 
 export default function WokringListComponent(props: WokringListComponentProps) {
 
-    const { curList, setLists, userId } = { ...props }
+    const { curList, setLists, userId, tasks, setTasks } = { ...props }
 
     const [newItem, setNewItem] = useState(false)
     const [updateState, setupdateState] = useState(false)
@@ -23,11 +25,6 @@ export default function WokringListComponent(props: WokringListComponentProps) {
         setNewItem(true)
 
     }
-    const toggleTask = useTodoStore(
-        (state) => state.toggleTask
-    );
-
-    const [tasks, setTasks] = useState<Task[]>([])
 
     const [newTitle, setNewTitle] = useState<string>("")
 
@@ -50,12 +47,40 @@ export default function WokringListComponent(props: WokringListComponentProps) {
         }
     };
 
+
+    const handleToggleTask = async (taskId: number) => {
+        const task = tasks[taskId];
+
+        if (!task) {
+            return;
+        }
+
+        const updatedTask: Task = {
+            ...task,
+            status:
+                task.status === "completed"
+                    ? "pending"
+                    : "completed",
+        };
+
+        const response = await toggleTask(updatedTask);
+
+        if (!response.success || response.data === null) {
+            return;
+        }
+
+        const updatedTaskFromDb = response.data;
+
+        setTasks((prev) => ({ ...prev, [taskId]: updatedTaskFromDb }));
+    };
+
+
     if (curList === undefined)
         return (
             <>
                 <div className="flex items-center justify-center py-16 text-sm text-gray-400 flex-col">
-                    <p className="text-2xl text-black">No Lists Present</p>
-                    <p>Please create a list</p>
+                    <p className="text-2xl text-black">No Lists Selected</p>
+                    <p>Please create/select a list</p>
                 </div>
             </>
         )
@@ -63,7 +88,7 @@ export default function WokringListComponent(props: WokringListComponentProps) {
     return (
         <>
             {/* Enter a new item */}
-            {newItem && <NewListItemComponent setNewItem={setNewItem} />}
+            {newItem && <NewListItemComponent setNewItem={setNewItem} listId={curList.id} setTasks={setTasks} />}
 
 
             {/* Top Title and New Item */}
@@ -95,20 +120,20 @@ export default function WokringListComponent(props: WokringListComponentProps) {
 
             {/* Showing the list items */}
             {
-                tasks.length > 0 ? tasks.map((item: Task) => (
-                    <div className="flex w-full gap-2 py-10 border-b border-gray-200" key={item.id}>
+                Object.values(tasks).length > 0 ? Object.values(tasks).map((task: Task) => (
+                    <div className="flex w-full gap-2 py-10 border-b border-gray-200" key={task.taskName}>
                         <div className="shrink-0">
                             <input type="checkbox" name="checkTask"
-                                checked={item.status === "completed"}
-                                onChange={() => toggleTask(item.id!)}
+                                checked={task.status === "completed"}
+                                onChange={() => { handleToggleTask(task.id!) }}
                             />
                         </div>
                         <div className="flex-1 min-w-0">
                             <span className="block w-full wrap-break-word">
-                                {item?.taskName}
+                                {task.taskName}
                             </span>
                             <div className="flex flex-wrap gap-1.5 text-xs">
-                                {item.tags.map((tag: string) => (
+                                {task.tags.map((tag: string) => (
                                     <span className="bg-gray-100 px-2 mr-2 rounded-xs truncate" key={tag}>
                                         #{tag}
                                     </span>
