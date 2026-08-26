@@ -41,7 +41,7 @@ export default function NewListItemComponent({
         const response = await createNewTask(task)
 
         if (response.success && response.data) {
-            setTasks((prev) => ({ ...prev, [response.data!]: task, }));
+            setTasks((prev) => ({ ...prev, [response.data!]: { ...task, id: response.data! }, }));
             setNewItem(false);
         }
 
