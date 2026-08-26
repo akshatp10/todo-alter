@@ -102,6 +102,8 @@ export default function HomePage() {
                     userId={userId}
                     tasks={tasks}
                     setTasks={setTasks}
+
+                    key={activeListId}
                 />
             </div>
 

@@ -23,7 +23,6 @@ export default function WokringListComponent(props: WokringListComponentProps) {
     const [updateState, setupdateState] = useState(false)
     const handleClickNewItem = () => {
         setNewItem(true)
-
     }
 
     const [newTitle, setNewTitle] = useState<string>("")
