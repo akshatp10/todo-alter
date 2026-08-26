@@ -1,8 +1,6 @@
 "use client";
 
 import { getUser } from "@/db/users";
-import { getAllUserList, getUserListById } from "@/services/db/listOperations";
-import { createNewTask, getAllTasksByList } from "@/services/db/tasksOperations";
 import useTodoStore from "@/store/todoStore";
 import useUserStore from "@/store/userStore";
 import { TodoList } from "@/types/todo";
@@ -36,20 +34,7 @@ export default function SideBarHome() {
             }
         };
 
-        const testListFunctions = async () => {
-            const lists = await getAllUserList(userId!);
-            console.log(lists);
-
-            const tasks = await getAllTasksByList(1);
-            console.log("Tasks : ", tasks)
-
-            // const creat = await createNewTask({ listId: 2, tags: [], taskName: "This is another task" })`
-            // console.log("Created Task : ", creat);`
-
-        }
-
         fetchUser();
-        testListFunctions();
 
         // if (userId === null)
         //     router.push('/')
