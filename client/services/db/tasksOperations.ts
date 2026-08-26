@@ -1,5 +1,7 @@
 import {
 	createTask,
+	deleteAllTasksByList,
+	deleteSingleTask,
 	getTaskById,
 	getTasksByList,
 	toggleTaskStatus,
@@ -97,6 +99,54 @@ export const toggleTask = async (task: Task): Promise<ApiResponse<Task>> => {
 			success: false,
 			message: "Internal Server Error",
 			data: {} as Task,
+		};
+	}
+};
+
+export const deleteTask = async (
+	taskId: number,
+): Promise<ApiResponse<null>> => {
+	try {
+		await deleteSingleTask(taskId);
+
+		return {
+			status: 200,
+			success: true,
+			message: "Tasks deleted successfully",
+			data: null,
+		};
+	} catch (error) {
+		console.error("deleteTask error:", error);
+
+		return {
+			status: 500,
+			success: false,
+			message: "Internal Server Error",
+			data: null,
+		};
+	}
+};
+
+export const deleteAllTasks = async (
+	listId: number,
+): Promise<ApiResponse<Task>> => {
+	try {
+		await deleteAllTasksByList(listId);
+
+		return {
+			status: 200,
+			success: true,
+			message: "Tasks deleted successfully",
+			data: null,
+		};
+	} catch (error) {
+		console.error("deleteAllTasks error:", error);
+
+		return {
+			status: 500,
+			success: false,
+			message: "Internal Server Error",
+			data: null,
 		};
 	}
 };

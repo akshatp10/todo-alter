@@ -1,11 +1,11 @@
 "use client";
 
-import { Pencil, Plus } from "lucide-react";
+import { Delete, Pencil, Plus } from "lucide-react";
 import NewListItemComponent from "./newList";
 import { useState } from "react";
 import { updateUserList } from "@/services/db/listOperations";
 import { List, Task } from "@/db/databaseTypes";
-import { toggleTask } from "@/services/db/tasksOperations";
+import { deleteTask, toggleTask } from "@/services/db/tasksOperations";
 
 interface WokringListComponentProps {
     curList: List | undefined;
@@ -74,6 +74,20 @@ export default function WokringListComponent(props: WokringListComponentProps) {
         setTasks((prev) => ({ ...prev, [taskId]: updatedTaskFromDb }));
     };
 
+    const handleTaskDelete = async (taskId: number | undefined) => {
+        if (!taskId) return;
+
+        const response = await deleteTask(taskId);
+
+        if (response.success) {
+            setTasks((prev) => {
+                const { [taskId]: _, ...remainingTasks } = prev;
+                return remainingTasks;
+            }
+            )
+        }
+    };
+
 
     if (curList === undefined)
         return (
@@ -128,17 +142,27 @@ export default function WokringListComponent(props: WokringListComponentProps) {
                                 onChange={() => { handleToggleTask(task.id!) }}
                             />
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <span className="block w-full wrap-break-word">
-                                {task.taskName}
-                            </span>
-                            <div className="flex flex-wrap gap-1.5 text-xs">
-                                {task.tags.map((tag: string) => (
-                                    <span className="bg-gray-100 px-2 mr-2 rounded-xs truncate" key={tag}>
-                                        #{tag}
-                                    </span>
-                                ))}
+                        <div className="flex-1 flex justify-between min-w-0">
+                            <div>
+                                <span className="block w-full wrap-break-word">
+                                    {task.taskName}
+                                </span>
+                                <div className="flex flex-wrap gap-1.5 text-xs">
+                                    {task.tags.map((tag: string) => (
+                                        <span className="bg-gray-100 px-2 mr-2 rounded-xs truncate" key={tag}>
+                                            #{tag}
+                                        </span>
+                                    ))}
+                                </div>
                             </div>
+                            <button
+                                className="mr-1 p-1.5 rounded-md text-gray-400
+                       hover:bg-red-100 hover:text-red-500
+                       transition-all cursor-pointer"
+                                onClick={() => { handleTaskDelete(task.id) }}
+                            >
+                                <Delete />
+                            </button>
                         </div>
                     </div>
                 )) : <div className="flex items-center justify-center py-16 text-sm text-gray-400 flex-col">
