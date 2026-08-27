@@ -1,31 +1,42 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, FieldErrors } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, registerSchema } from "../schema/authFormSchema";
+import Input from "./InputComponent";
 
-type authData = {
-    email?: string,
-    name?: string,
-    password?: string,
-    confirmPassword?: string
-}
+type LoginData = z.infer<typeof loginSchema>;
+type RegisterData = z.infer<typeof registerSchema>;
 
 export default function Authenticate() {
 
+    const router = useRouter();
+
     const [isLogin, setIsLogin] = useState<boolean>(true)
 
-    const { register, handleSubmit, watch, formState: { errors }, } = useForm()
+    const { register, handleSubmit, reset, formState: { errors }, } = useForm<LoginData | RegisterData>(
+        {
+            resolver: zodResolver(isLogin ? loginSchema : registerSchema)
+        }
+    )
 
-    const onSubmit: SubmitHandler<authData> = (data) => {
+    const onSubmit: SubmitHandler<LoginData | RegisterData> = (data) => {
         if (isLogin) {
             console.log(data)
         }
         else {
             console.log(data)
         }
-        redirect('/home')
+        router.push('/home')
     }
+
+    const toggleAuthMode = () => {
+        setIsLogin((previous) => !previous);
+        reset();
+    };
 
     return (
         // Need to fix the code
@@ -33,28 +44,34 @@ export default function Authenticate() {
             {/* <h1 className="">{isLogin ? "Login" : "Register"}</h1> */}
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between items-center gap-2 min-h-[50%]">
                 <div className="flex flex-col gap-2 items-center justify-center">
-                    <p className="w-full flex justify-between flex-col">
-                        {/* <span>Email : </span> */}
-                        <input type="email" id="email" className="border-b border-gray-300 rounded-xs text-start px-2 py-1" {...register("email", { required: true })} placeholder="Enter Your Email" />
-                    </p>
-                    {!isLogin ?
-                        <p className="w-full flex justify-between flex-col">
-                            {/* <span>Name : </span> */}
-                            <input type="text" className="border-b border-gray-300 rounded-xs px-2 py-1 text-start" {...register("uname", { required: true })} placeholder="Enter Your Name" />
-                        </p>
-                        : ""
-                    }
-                    <p className="w-full flex justify-between flex-col">
-                        {/* <span>Password : </span> */}
-                        <input type="password" id="" className="border-b border-gray-300 rounded-xs px-2 py-1 text-start" {...register("pwrd", { required: true })} placeholder="Enter Your Password" />
-                    </p>
-                    {!isLogin ?
-                        <p className="w-full flex justify-between flex-col">
-                            {/* <span>Confirm Password : </span> */}
-                            <input type="password" id="" className="border-b border-gray-300 rounded-xs px-2 py-1 text-start" {...register("cnfrm_pwrd", { required: true })} placeholder="Confirm Your Password" />
-                        </p>
-                        : ""
-                    }
+
+                    <Input
+                        type="email"
+                        placeholder="Enter Your Email"
+                        registration={register("email")}
+                        error={errors.email}
+                    />
+                    <Input
+                        type="text"
+                        placeholder="Enter Your Name"
+                        registration={register("name")}
+                        error={errors.name}
+                    />
+                    <Input
+                        type="password"
+                        placeholder="Enter Your Password"
+                        registration={register("password")}
+                        error={errors.password}
+                    />
+                    {/* Confirm Password Only for register mode */}
+                    {!isLogin && (
+                        <Input
+                            type="password"
+                            placeholder="Confirm Your Password"
+                            registration={register("confirmPassword")}
+                            error={(errors as FieldErrors<RegisterData>).confirmPassword}
+                        />
+                    )}
                 </div>
 
                 <div className="flex flex-col mt-5">
@@ -62,11 +79,11 @@ export default function Authenticate() {
                     <div className="text-[13px]">
                         {isLogin ?
                             <>
-                                Don't have an account? <button onClick={() => { setIsLogin(false) }} className="cursor-pointer text-blue-500">Register Now</button>
+                                Don't have an account? <button onClick={toggleAuthMode} className="cursor-pointer text-blue-500">Register Now</button>
                             </>
                             :
                             <>
-                                Already have an account? <button onClick={() => { setIsLogin(true) }} className="cursor-pointer text-blue-500">Login Now</button>
+                                Already have an account? <button onClick={toggleAuthMode} className="cursor-pointer text-blue-500">Login Now</button>
                             </>
                         }
                     </div>
