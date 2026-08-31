@@ -23,7 +23,7 @@ export const getAllUserList = async (
 			data: lists,
 		};
 	} catch (error) {
-		console.error("getAllUserList error:", error);
+		// console.error("getAllUserList error:", error);
 		return {
 			status: 500,
 			success: false,
@@ -56,7 +56,7 @@ export const getUserListById = async (
 			data: list,
 		};
 	} catch (error) {
-		console.error("getUserListById error:", error);
+		// console.error("getUserListById error:", error);
 
 		return {
 			status: 500,
@@ -92,7 +92,7 @@ export const createUserList = async (
 			data: createdList,
 		};
 	} catch (error) {
-		console.error("createUserList error:", error);
+		// console.error("createUserList error:", error);
 
 		return {
 			status: 500,
@@ -137,7 +137,7 @@ export const updateUserList = async (
 			data: updatedList,
 		};
 	} catch (error) {
-		console.error("updateUserList error:", error);
+		// console.error("updateUserList error:", error);
 
 		return {
 			status: 500,
