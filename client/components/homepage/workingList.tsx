@@ -28,6 +28,8 @@ export default function WokringListComponent(
         undefined
     );
 
+    const mappedTasks = Object.values(tasks);
+
     const handleClickNewItem = () => {
         setEditingTask(undefined);
         seteditTaskOpen(true);
@@ -180,11 +182,11 @@ export default function WokringListComponent(
                 </button>
             </div>
 
-            {Object.values(tasks).length > 0 ? (
-                Object.values(tasks).map((task: Task) => (
+            {mappedTasks.length > 0 ? (
+                mappedTasks.map((task: Task) => (
                     <div
                         className="flex w-full gap-3 py-6 border-b border-gray-200"
-                        key={task.id}
+                        key={task?.id}
                     >
                         <div className="shrink-0 pt-1">
                             <input
@@ -209,7 +211,7 @@ export default function WokringListComponent(
                                             : "text-gray-800"
                                             }`}
                                     >
-                                        {task.taskName}
+                                        {task?.taskName}
                                     </span>
 
                                     <button
