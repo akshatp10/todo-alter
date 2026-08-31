@@ -51,8 +51,6 @@ interface TodoDB extends DBSchema {
 export async function getDatabase(): Promise<IDBPDatabase<TodoDB>> {
 	return openDB<TodoDB>("todo-app", 1, {
 		upgrade(db) {
-			console.log("Creating todo app database...");
-
 			//Uers Object
 			if (!db.objectStoreNames.contains("users")) {
 				const userStore = db.createObjectStore("users", {

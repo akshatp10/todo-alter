@@ -29,10 +29,7 @@ export default function Authenticate() {
         if (isLogin) {
             const response = await userLogin(data as LoginData);
 
-            console.log(response);
-
             if (!response.success) {
-                console.log(response.message);
                 return;
             }
 
@@ -43,10 +40,7 @@ export default function Authenticate() {
         else {
             const response = await userRegister(data as RegisterData);
 
-            console.log(response);
-
             if (!response.success) {
-                console.log(response.message);
                 return;
             }
 
