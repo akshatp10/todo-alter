@@ -2,7 +2,6 @@
 
 import { X } from "lucide-react";
 import { useState } from "react";
-import useTodoStore from "@/store/todoStore";
 import { createNewTask } from "@/services/db/tasksOperations";
 import { Task } from "@/db/databaseTypes";
 
