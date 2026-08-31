@@ -1,8 +1,10 @@
 import {
 	createTask,
+	deleteAllTasksByList,
+	deleteSingleTask,
 	getTaskById,
 	getTasksByList,
-	toggleTaskStatus,
+	updateSingleTask,
 } from "@/db/tasks";
 import { Task } from "@/db/databaseTypes";
 import { ApiResponse } from "../types/apiResponseType";
@@ -59,7 +61,7 @@ export const getAllTasksByList = async (
 	}
 };
 
-export const toggleTask = async (task: Task): Promise<ApiResponse<Task>> => {
+export const updateTask = async (task: Task): Promise<ApiResponse<Task>> => {
 	try {
 		if (task.id === undefined) {
 			return {
@@ -70,11 +72,11 @@ export const toggleTask = async (task: Task): Promise<ApiResponse<Task>> => {
 			};
 		}
 
-		await toggleTaskStatus(task);
+		await updateSingleTask(task);
 
-		const updatedTask = await getTaskById(task.id);
+		const updatedTaskStatus = await getTaskById(task.id);
 
-		if (!updatedTask) {
+		if (!updatedTaskStatus) {
 			return {
 				status: 404,
 				success: false,
@@ -87,7 +89,7 @@ export const toggleTask = async (task: Task): Promise<ApiResponse<Task>> => {
 			status: 200,
 			success: true,
 			message: "Task updated successfully",
-			data: updatedTask,
+			data: updatedTaskStatus,
 		};
 	} catch (error) {
 		console.error("toggleTask error:", error);
@@ -97,6 +99,54 @@ export const toggleTask = async (task: Task): Promise<ApiResponse<Task>> => {
 			success: false,
 			message: "Internal Server Error",
 			data: {} as Task,
+		};
+	}
+};
+
+export const deleteTask = async (
+	taskId: number,
+): Promise<ApiResponse<null>> => {
+	try {
+		await deleteSingleTask(taskId);
+
+		return {
+			status: 200,
+			success: true,
+			message: "Tasks deleted successfully",
+			data: null,
+		};
+	} catch (error) {
+		console.error("deleteTask error:", error);
+
+		return {
+			status: 500,
+			success: false,
+			message: "Internal Server Error",
+			data: null,
+		};
+	}
+};
+
+export const deleteAllTasks = async (
+	listId: number,
+): Promise<ApiResponse<Task>> => {
+	try {
+		await deleteAllTasksByList(listId);
+
+		return {
+			status: 200,
+			success: true,
+			message: "Tasks deleted successfully",
+			data: null,
+		};
+	} catch (error) {
+		console.error("deleteAllTasks error:", error);
+
+		return {
+			status: 500,
+			success: false,
+			message: "Internal Server Error",
+			data: null,
 		};
 	}
 };

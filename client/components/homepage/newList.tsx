@@ -2,23 +2,28 @@
 
 import { X } from "lucide-react";
 import { useState } from "react";
-import { createNewTask } from "@/services/db/tasksOperations";
+import { createNewTask, updateTask } from "@/services/db/tasksOperations";
 import { Task } from "@/db/databaseTypes";
 
 type NewListItemProps = {
-    listId: number | undefined
+    listId: number | undefined;
     setNewItem: (value: boolean) => void;
     setTasks: React.Dispatch<React.SetStateAction<Record<number, Task>>>;
+    task?: Task;
 };
 
 export default function NewListItemComponent({
-    setNewItem, listId, setTasks
+    setNewItem,
+    listId,
+    setTasks,
+    task,
 }: NewListItemProps) {
-    const [itemName, setItemName] = useState("");
-    const [tagsInput, setTagsInput] = useState("");
+    const [itemName, setItemName] = useState(task?.taskName ?? "");
+    const [tagsInput, setTagsInput] = useState(task?.tags?.join(", ") ?? "");
 
-    const handleAddItem = async () => {
+    const isEditing = task !== undefined;
 
+    const handleSubmit = async () => {
         if (listId === undefined) return;
 
         const trimmedItem = itemName.trim();
@@ -30,37 +35,61 @@ export default function NewListItemComponent({
             .map((tag) => tag.trim())
             .filter(Boolean);
 
-        const task: Task = {
+        if (isEditing && task.id !== undefined) {
+            const updatedTask: Task = {
+                ...task,
+                taskName: trimmedItem,
+                tags: tags,
+            };
+
+            const response = await updateTask(updatedTask);
+
+            if (!response.success || response.data === null) {
+                return;
+            }
+
+            setTasks((prev) => ({
+                ...prev,
+                [task.id!]: response.data!,
+            }));
+
+            setNewItem(false);
+            return;
+        }
+
+        const newTask: Task = {
             listId: listId,
             status: "pending",
             taskName: trimmedItem,
-            tags: tags
-        }
+            tags: tags,
+        };
 
-        const response = await createNewTask(task)
+        const response = await createNewTask(newTask);
 
         if (response.success && response.data) {
-            setTasks((prev) => ({ ...prev, [response.data!]: { ...task, id: response.data! }, }));
+            setTasks((prev) => ({
+                ...prev,
+                [response.data!]: {
+                    ...newTask,
+                    id: response.data!,
+                },
+            }));
+
             setNewItem(false);
         }
-
     };
 
     return (
         <>
-            {/* Backdrop */}
             <div
                 className="fixed inset-0 z-10 backdrop-blur-xs"
                 onClick={() => setNewItem(false)}
             />
 
-            {/* Modal */}
             <div className="fixed left-1/2 top-1/2 z-20 w-1/2 -translate-x-1/2 -translate-y-1/2 bg-black text-white rounded-2xl p-10 flex flex-col gap-5">
-
-                {/* Header */}
                 <div className="flex justify-between items-center">
                     <p className="font-bold text-2xl">
-                        New Item
+                        {isEditing ? "Edit Task" : "New Item"}
                     </p>
 
                     <button
@@ -72,7 +101,6 @@ export default function NewListItemComponent({
                     </button>
                 </div>
 
-                {/* Task */}
                 <div className="flex flex-col gap-2">
                     <label className="text-sm text-gray-300">
                         Task
@@ -87,7 +115,6 @@ export default function NewListItemComponent({
                     />
                 </div>
 
-                {/* Tags */}
                 <div className="flex flex-col gap-2">
                     <label className="text-sm text-gray-300">
                         Tags
@@ -102,14 +129,13 @@ export default function NewListItemComponent({
                     />
                 </div>
 
-                {/* Add */}
                 <button
                     type="button"
-                    onClick={handleAddItem}
+                    onClick={handleSubmit}
                     disabled={!itemName.trim()}
                     className="bg-white w-fit mx-auto text-black px-5 py-2 rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Add Item
+                    {isEditing ? "Update Task" : "Add Item"}
                 </button>
             </div>
         </>

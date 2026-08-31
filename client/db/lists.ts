@@ -1,4 +1,5 @@
 import { getDatabase, List } from "./databaseTypes";
+import { deleteAllTasksByList } from "./tasks";
 
 export async function createList(list: Omit<List, "id">) {
 	const db = await getDatabase();
@@ -19,4 +20,10 @@ export async function getAllListsByUser(userId: number) {
 export async function updateList(list: List) {
 	const db = await getDatabase();
 	return db.put("lists", list);
+}
+
+export async function deleteCompleteList(listId: number) {
+	const db = await getDatabase();
+	await deleteAllTasksByList(listId);
+	await db.delete("lists", listId);
 }

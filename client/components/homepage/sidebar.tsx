@@ -2,14 +2,15 @@
 
 import { List } from "@/db/databaseTypes";
 import { getUser } from "@/db/users";
-import { createUserList } from "@/services/db/listOperations";
+import { createUserList, deleteList } from "@/services/db/listOperations";
+import { deleteAllTasks } from "@/services/db/tasksOperations";
 
 import useTodoStore from "@/store/todoStore";
 import useUserStore from "@/store/userStore";
 
-import { LogOut } from "lucide-react";
+import { LogOut, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 interface SideBarHomeProps {
@@ -86,6 +87,26 @@ export default function SideBarHome({ lists, setLists, userId, activeListId }: S
         router.push("/");
     };
 
+    const handleDeleteList = async (listId: number | undefined) => {
+        if (!listId) return;
+
+        const response = await deleteAllTasks(listId);
+
+        if (response.success) {
+            const listDeleteResponse = await deleteList(listId)
+            if (listDeleteResponse.success) {
+                if (activeListId === listId) {
+                    setActiveList(null)
+                }
+
+                setLists((prev) => {
+                    const { [listId]: _, ...remainingLists } = prev;
+                    return remainingLists;
+                })
+            }
+        }
+    }
+
     return (
         <>
             {/* Username and signout */}
@@ -112,20 +133,34 @@ export default function SideBarHome({ lists, setLists, userId, activeListId }: S
 
             <div className="text-md flex flex-col items-start gap-2 -mt-2 overflow-y-auto">
                 {Object.values(lists).map((list) => (
-                    <button
-                        key={list.id}
-                        className={`text-[14px] px-3 cursor-pointer hover:bg-gray-200 w-full py-1 text-start rounded-md ${list.id === activeListId
-                            ? "bg-gray-200"
-                            : ""
-                            }`}
-                        onClick={() => {
-                            setActiveList(list.id!);
-                        }}
-                    >
-                        <span className="block w-full truncate">
-                            {list.listName}
-                        </span>
-                    </button>
+                    <Fragment key={list.id}>
+                        <div
+                            className={`group flex items-center w-full rounded-md ${list.id === activeListId ? "bg-gray-200" : ""
+                                }`}
+                        >
+                            <button
+                                className="min-w-0 flex-1 text-[14px] px-3 py-1.5 text-start
+                       cursor-pointer rounded-md
+                       hover:bg-gray-200 transition-colors"
+                                onClick={() => {
+                                    setActiveList(list.id!);
+                                }}
+                            >
+                                <span className="block w-full truncate">
+                                    {list.listName}
+                                </span>
+                            </button>
+
+                            <button
+                                className="mr-1 p-1.5 rounded-md text-gray-400
+                       hover:bg-red-100 hover:text-red-500
+                       transition-all cursor-pointer"
+                                onClick={() => { handleDeleteList(list.id) }}
+                            >
+                                <Trash size={15} />
+                            </button>
+                        </div>
+                    </Fragment>
                 ))}
 
                 {/* New List */}
