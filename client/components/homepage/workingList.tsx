@@ -105,7 +105,7 @@ export default function WokringListComponent(props: WokringListComponentProps) {
                         </div>
                         <div className="flex-1 min-w-0">
                             <span className="block w-full wrap-break-word">
-                                {item.taskName}
+                                {item?.taskName}
                             </span>
                             <div className="flex flex-wrap gap-1.5 text-xs">
                                 {item.tags.map((tag: string) => (
