@@ -3,6 +3,7 @@ import {
 	updateList,
 	getAllListsByUser,
 	getListById,
+	deleteCompleteList,
 } from "@/db/lists";
 
 import { ApiResponse } from "../types/apiResponseType";
@@ -138,6 +139,30 @@ export const updateUserList = async (
 		};
 	} catch (error) {
 		// console.error("updateUserList error:", error);
+
+		return {
+			status: 500,
+			success: false,
+			message: "Internal Server Error",
+			data: null,
+		};
+	}
+};
+
+export const deleteList = async (
+	listId: number,
+): Promise<ApiResponse<null>> => {
+	try {
+		await deleteCompleteList(listId);
+
+		return {
+			status: 200,
+			success: true,
+			message: "List deleted successfully",
+			data: null,
+		};
+	} catch (error) {
+		console.error("deleteTask error:", error);
 
 		return {
 			status: 500,
