@@ -19,7 +19,7 @@ export const createNewTask = async (
 			data: taskId,
 		};
 	} catch (error) {
-		console.error("createNewTask error:", error);
+		// console.error("createNewTask error:", error);
 
 		return {
 			status: 500,
@@ -43,7 +43,7 @@ export const getAllTasksByList = async (
 			data: tasks,
 		};
 	} catch (error) {
-		console.error("getAllTasksByList error:", error);
+		// console.error("getAllTasksByList error:", error);
 
 		return {
 			status: 500,
