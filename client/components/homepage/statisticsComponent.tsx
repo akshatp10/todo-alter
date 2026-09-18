@@ -1,19 +1,17 @@
 "use client";
 
-import useTodoStore from "@/store/todoStore";
+import { Task } from "@/db/databaseTypes";
 import { useState } from "react";
-import { useShallow } from "zustand/shallow";
 
-export default function ListStatsComponent() {
+interface ListStatComponentProps {
+    tasks: Record<number, Task>;
+}
 
-    const { lists, activeListId } = useTodoStore(
-        useShallow((state) => ({ lists: state.lists, activeListId: state.activeListId }))
-    );
+export default function ListStatsComponent({ tasks }: ListStatComponentProps) {
 
     const [publicAccess, setPublicAccess] = useState<boolean>(false)
-    const activeList = lists[activeListId!];
 
-    const items = activeList?.items ?? [];
+    const items = Object.values(tasks);
 
     const totalTasks = items.length;
     const pendingTasks = items.filter(
