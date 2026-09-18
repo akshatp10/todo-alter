@@ -7,6 +7,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, registerSchema } from "../schema/authFormSchema";
 import Input from "./InputComponent";
+import useUserStore from "@/store/userStore";
+import { userLogin, userRegister } from "@/services/db/userAuthenticate";
 
 type LoginData = z.infer<typeof loginSchema>;
 type RegisterData = z.infer<typeof registerSchema>;
@@ -14,7 +16,7 @@ type RegisterData = z.infer<typeof registerSchema>;
 export default function Authenticate() {
 
     const router = useRouter();
-
+    const login = useUserStore((state) => state.login);
     const [isLogin, setIsLogin] = useState<boolean>(true)
 
     const { register, handleSubmit, reset, formState: { errors }, } = useForm<LoginData | RegisterData>(
@@ -23,14 +25,28 @@ export default function Authenticate() {
         }
     )
 
-    const onSubmit: SubmitHandler<LoginData | RegisterData> = (data) => {
+    const onSubmit: SubmitHandler<LoginData | RegisterData> = async (data) => {
         if (isLogin) {
-            console.log(data)
+            const response = await userLogin(data as LoginData);
+
+            if (!response.success) {
+                return;
+            }
+
+            login(response.data!);
+            router.push("/home");
+            return;
         }
         else {
-            console.log(data)
+            const response = await userRegister(data as RegisterData);
+
+            if (!response.success) {
+                return;
+            }
+
+            login(response.data!);
+            router.push("/home");
         }
-        router.push('/home')
     }
 
     const toggleAuthMode = () => {
@@ -39,7 +55,6 @@ export default function Authenticate() {
     };
 
     return (
-        // Need to fix the code
         <div className="w-[50%] min-h-[50%] rounded-4xl flex flex-col justify-between items-center">
             {/* <h1 className="">{isLogin ? "Login" : "Register"}</h1> */}
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between items-center gap-2 min-h-[50%]">
@@ -51,12 +66,14 @@ export default function Authenticate() {
                         registration={register("email")}
                         error={errors.email}
                     />
-                    <Input
-                        type="text"
-                        placeholder="Enter Your Name"
-                        registration={register("name")}
-                        error={errors.name}
-                    />
+                    {!isLogin &&
+                        <Input
+                            type="text"
+                            placeholder="Enter Your Name"
+                            registration={register("name")}
+                            error={(errors as FieldErrors<RegisterData>).name}
+                        />
+                    }
                     <Input
                         type="password"
                         placeholder="Enter Your Password"
@@ -79,11 +96,11 @@ export default function Authenticate() {
                     <div className="text-[13px]">
                         {isLogin ?
                             <>
-                                Don&apos;t have an account? <button onClick={toggleAuthMode} className="cursor-pointer text-blue-500">Register Now</button>
+                                Don&aps;t have an account? <button onClick={toggleAuthMode} type="button" className="cursor-pointer text-blue-500">Register Now</button>
                             </>
                             :
                             <>
-                                Already have an account? <button onClick={toggleAuthMode} className="cursor-pointer text-blue-500">Login Now</button>
+                                Already have an account? <button onClick={toggleAuthMode} type="button" className="cursor-pointer text-blue-500">Login Now</button>
                             </>
                         }
                     </div>
