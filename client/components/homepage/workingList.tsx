@@ -2,27 +2,32 @@
 
 import { Pencil, Plus } from "lucide-react";
 import NewListItemComponent from "./newList";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useTodoStore from "@/store/todoStore";
-import { Task, TodoList } from "@/types/todo";
+import { Task } from "@/types/todo";
+import { useShallow } from "zustand/shallow";
 
 export default function WokringListComponent() {
     const [newItem, setNewItem] = useState(false)
     const [updateState, setupdateState] = useState(false)
     const handleClickNewItem = () => {
         setNewItem(true)
+
     }
+    const { lists, activeListId, toggleTask, updateListTitle } = useTodoStore(
+        useShallow((state) => ({
+            lists: state.lists,
+            activeListId: state.activeListId,
+            toggleTask: state.toggleTask,
+            updateListTitle: state.updateListTitle,
+        }))
+    );
 
-    const { lists, activeListId, toggleTask, updateListTitle } = useTodoStore();
 
-    const currentList: TodoList = lists.find((list: TodoList) => (list.id === activeListId))!;
+    const currentList = lists[activeListId!]
+    const items = currentList.items ?? [];
+
     const [newTitle, setNewTitle] = useState<string>("")
-
-    useEffect(() => {
-        setNewTitle(currentList.listName)
-        setupdateState(false)
-    }, [currentList])
-
 
     const handleUpdateTitle = () => {
         if (!newTitle.trim() || !currentList) return;
@@ -30,6 +35,16 @@ export default function WokringListComponent() {
         updateListTitle(newTitle.trim());
         setupdateState(false);
     };
+
+    if (activeListId === null)
+        return (
+            <>
+                <div className="flex items-center justify-center py-16 text-sm text-gray-400 flex-col">
+                    <p className="text-2xl text-black">No Lists Present</p>
+                    <p>Please create a list</p>
+                </div>
+            </>
+        )
 
     return (
         <>
@@ -63,7 +78,7 @@ export default function WokringListComponent() {
 
             {/* Showing the list items */}
             {
-                currentList?.items?.length > 0 ? currentList.items.map((item: Task) => (
+                items.length > 0 ? items.map((item: Task) => (
                     <div className="flex w-full gap-2 py-10 border-b border-gray-200" key={item.id}>
                         <div className="shrink-0">
                             <input type="checkbox" name="checkTask"

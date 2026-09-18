@@ -1,14 +1,17 @@
 "use client";
 
 import useTodoStore from "@/store/todoStore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useShallow } from "zustand/shallow";
 
 export default function ListStatsComponent() {
 
-    const { lists, activeListId } = useTodoStore();
+    const { lists, activeListId } = useTodoStore(
+        useShallow((state) => ({ lists: state.lists, activeListId: state.activeListId }))
+    );
 
     const [publicAccess, setPublicAccess] = useState<boolean>(false)
-    const activeList = lists.find((list) => list.id === activeListId);
+    const activeList = lists[activeListId!];
 
     const items = activeList?.items ?? [];
 
@@ -17,10 +20,6 @@ export default function ListStatsComponent() {
         (item) => item.status === "pending"
     ).length;
     const completedTasks = totalTasks - pendingTasks;
-
-    useEffect(() => {
-        setPublicAccess(false);
-    }, [activeListId]);
 
     const tagCounts = items.reduce<Record<string, number>>(
         (acc, item) => {

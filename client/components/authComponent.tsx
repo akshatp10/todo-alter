@@ -79,7 +79,7 @@ export default function Authenticate() {
                     <div className="text-[13px]">
                         {isLogin ?
                             <>
-                                Don't have an account? <button onClick={toggleAuthMode} className="cursor-pointer text-blue-500">Register Now</button>
+                                Don&apos;t have an account? <button onClick={toggleAuthMode} className="cursor-pointer text-blue-500">Register Now</button>
                             </>
                             :
                             <>

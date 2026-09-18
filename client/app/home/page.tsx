@@ -3,9 +3,12 @@
 import SideBarHome from "@/components/homepage/sidebar";
 import ListStatsComponent from "@/components/homepage/statisticsComponent";
 import WokringListComponent from "@/components/homepage/workingList";
+import useTodoStore from "@/store/todoStore";
 
 
 export default function HomePage() {
+
+    const { activeListId } = useTodoStore();
 
     return (
         <>
@@ -15,11 +18,11 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex-2 min-w-0 flex flex-col p-4 overflow-y-auto">
-                    <WokringListComponent />
+                    <WokringListComponent key={activeListId} />
                 </div>
 
                 <div className="flex-1 min-w-0 flex flex-col border-l border-gray-200 p-4">
-                    <ListStatsComponent />
+                    <ListStatsComponent key={activeListId} />
                 </div>
             </div>
         </>
