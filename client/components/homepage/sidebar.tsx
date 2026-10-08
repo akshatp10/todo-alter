@@ -111,7 +111,7 @@ export default function SideBarHome({
 
 	return (
 		<>
-			<div className="h-full">
+			<div className="h-full w-full">
 				{/* Username and signout */}
 				<div className="w-full flex justify-between">
 					<span className="font-bold text-xl">{userName}</span>
@@ -125,7 +125,7 @@ export default function SideBarHome({
 				</div>
 
 				{/* Horizontal ruling */}
-				<div className="w-full border border-gray-200" />
+				<div className="w-full border border-gray-200 my-2" />
 
 				{/* List navigation */}
 				<span className="font-bold text-gray-500">MY LISTS</span>

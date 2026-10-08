@@ -79,7 +79,7 @@ export default function HomePage() {
 	return (
 		<div className="flex h-screen w-screen overflow-hidden bg-white text-gray-900">
 			{/* Sidebar */}
-			<div className="flex h-full w-64 shrink-0 flex-col gap-4 overflow-hidden border-r border-gray-200 bg-gray-50 p-4">
+			<div className="shrink-0 h-full flex flex-col gap-4 border-r border-gray-200 bg-gray-100 p-4">
 				<SideBarHome
 					lists={lists}
 					setLists={setLists}
