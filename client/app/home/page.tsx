@@ -15,102 +15,106 @@ import { useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 export default function HomePage() {
-    const userId = useUserStore(
-        useShallow((state) => state.userId)
-    );
+	const userId = useUserStore(useShallow((state) => state.userId));
 
-    const activeListId = useTodoStore(
-        useShallow((state) => state.activeListId)
-    );
+	const activeListId = useTodoStore(
+		useShallow((state) => state.activeListId),
+	);
 
-    const [lists, setLists] = useState<Record<number, List>>({});
-    const [tasks, setTasks] = useState<Record<number, Task>>({});
+	const [lists, setLists] = useState<Record<number, List>>({});
+	const [tasks, setTasks] = useState<Record<number, Task>>({});
 
-    useEffect(() => {
-        if (userId === null) {
-            return;
-        }
+	useEffect(() => {
+		if (userId === null) {
+			return;
+		}
 
-        const fetchLists = async () => {
-            const response = await getAllUserList(userId);
+		const fetchLists = async () => {
+			const response = await getAllUserList(userId);
 
-            if (response.success && response.data) {
-                const listsById: Record<number, List> = {};
+			if (response.success && response.data) {
+				const listsById: Record<number, List> = {};
 
-                for (const list of response.data) {
-                    if (list.id !== undefined) {
-                        listsById[list.id] = list;
-                    }
-                }
+				for (const list of response.data) {
+					if (list.id !== undefined) {
+						listsById[list.id] = list;
+					}
+				}
 
-                setLists(listsById);
-            }
-        };
+				setLists(listsById);
+			}
+		};
 
-        fetchLists();
-    }, [userId]);
+		fetchLists();
+	}, [userId]);
 
-    useEffect(() => {
-        if (activeListId === null) {
-            return;
-        }
+	useEffect(() => {
+		if (activeListId === null) {
+			return;
+		}
 
-        const fetchAllTasks = async () => {
-            const response = await getAllTasksByList(activeListId);
+		const fetchAllTasks = async () => {
+			const response = await getAllTasksByList(activeListId);
 
-            if (response.success && response.data) {
-                const taskById: Record<number, Task> = {};
+			if (response.success && response.data) {
+				const taskById: Record<number, Task> = {};
 
-                for (const task of response.data) {
-                    if (task.id !== undefined) {
-                        taskById[task.id] = task;
-                    }
-                }
+				for (const task of response.data) {
+					if (task.id !== undefined) {
+						taskById[task.id] = task;
+					}
+				}
 
-                console.log(taskById);
+				console.log(taskById);
 
+				setTasks(taskById);
+			}
+		};
 
-                setTasks(taskById);
-            }
-        }
+		fetchAllTasks();
+	}, [activeListId]);
 
-        fetchAllTasks();
-    }, [activeListId]);
+	const currentList = activeListId !== null ? lists[activeListId] : undefined;
 
-    const currentList =
-        activeListId !== null
-            ? lists[activeListId]
-            : undefined;
+	return (
+		<div className="w-screen h-screen flex">
+			{/* Sidebar */}
+			<div className="flex-1 min-w-fit h-full flex flex-col gap-4 border-r border-gray-200 bg-gray-100 p-4">
+				<SideBarHome
+					lists={lists}
+					setLists={setLists}
+					activeListId={activeListId}
+					userId={userId}
+				/>
+			</div>
 
-    return (
-        <div className="w-screen h-screen flex">
-            {/* Sidebar */}
-            <div className="flex-1 min-w-0 flex flex-col gap-4 border-r border-gray-200 bg-gray-100 p-4">
-                <SideBarHome
-                    lists={lists}
-                    setLists={setLists}
-                    activeListId={activeListId}
-                    userId={userId}
-                />
-            </div>
+			{/* Working list */}
+			<div className="flex-2 min-w-fit flex flex-col p-4 overflow-y-auto h-full items-center">
+				<WokringListComponent
+					curList={currentList}
+					setLists={setLists}
+					userId={userId}
+					tasks={tasks}
+					setTasks={setTasks}
+					key={activeListId}
+				/>
+				<ins
+					className="adsbyadgeist"
+					style={{
+						display: "inline-block",
+						width: 800,
+						height: 80,
+						fontFamily: "Arial",
+						color: "#63aa75",
+					}}
+					data-ad-slot="6ac63e523741c8e66ba999a0"
+				></ins>
+			</div>
 
-            {/* Working list */}
-            <div className="flex-2 min-w-0 flex flex-col p-4 overflow-y-auto">
-                <WokringListComponent
-                    curList={currentList}
-                    setLists={setLists}
-                    userId={userId}
-                    tasks={tasks}
-                    setTasks={setTasks}
-
-                    key={activeListId}
-                />
-            </div>
-
-            {/* Statistics */}
-            <div className="flex-1 min-w-0 flex flex-col border-l border-gray-200 p-4">
-                <ListStatsComponent tasks={tasks} key={activeListId} />
-            </div>
-        </div>
-    );
+			{/* Statistics */}
+			<div className="flex-1 min-w-fit flex flex-col border-l border-gray-200 p-4">
+				<ListStatsComponent tasks={tasks} key={activeListId} />
+			</div>
+		</div>
+	);
 }

@@ -14,171 +14,186 @@ import { Fragment, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 interface SideBarHomeProps {
-    lists: Record<number, List>;
-    setLists: React.Dispatch<React.SetStateAction<Record<number, List>>>;
-    userId: number | null;
-    activeListId: number | null;
+	lists: Record<number, List>;
+	setLists: React.Dispatch<React.SetStateAction<Record<number, List>>>;
+	userId: number | null;
+	activeListId: number | null;
 }
 
-export default function SideBarHome({ lists, setLists, userId, activeListId }: SideBarHomeProps) {
-    const router = useRouter();
+export default function SideBarHome({
+	lists,
+	setLists,
+	userId,
+	activeListId,
+}: SideBarHomeProps) {
+	const router = useRouter();
 
-    const { logout } = useUserStore(
-        useShallow((state) => ({
-            logout: state.logout,
-        }))
-    );
+	const { logout } = useUserStore(
+		useShallow((state) => ({
+			logout: state.logout,
+		})),
+	);
 
-    const setActiveList = useTodoStore(
-        (state) => state.setActiveList
-    );
+	const setActiveList = useTodoStore((state) => state.setActiveList);
 
-    const [newListName, setNewListName] = useState("");
-    const [userName, setUserName] = useState("");
+	const [newListName, setNewListName] = useState("");
+	const [userName, setUserName] = useState("");
 
-    //Function fetches username and show it on the UI
-    useEffect(() => {
-        if (userId === null) {
-            return;
-        }
+	//Function fetches username and show it on the UI
+	useEffect(() => {
+		if (userId === null) {
+			return;
+		}
 
-        const fetchUserData = async () => {
-            const user = await getUser(userId);
-            setUserName(user?.name ?? "");
-        };
+		const fetchUserData = async () => {
+			const user = await getUser(userId);
+			setUserName(user?.name ?? "");
+		};
 
-        fetchUserData();
-    }, [userId]);
+		fetchUserData();
+	}, [userId]);
 
-    //New list is created here
-    const handleNewList = async () => {
-        const name = newListName.trim();
+	//New list is created here
+	const handleNewList = async () => {
+		const name = newListName.trim();
 
-        if (!name || userId === null) {
-            return;
-        }
+		if (!name || userId === null) {
+			return;
+		}
 
-        const newList: List = {
-            listName: name,
-            userId,
-        };
+		const newList: List = {
+			listName: name,
+			userId,
+		};
 
-        const response = await createUserList(newList);
+		const response = await createUserList(newList);
 
-        if (!response.success || response.data?.id === undefined) {
-            return;
-        }
+		if (!response.success || response.data?.id === undefined) {
+			return;
+		}
 
-        const createdList: List = {
-            ...newList,
-            id: response.data.id,
-        };
+		const createdList: List = {
+			...newList,
+			id: response.data.id,
+		};
 
-        setLists((prev) => ({ ...prev, [createdList.id!]: createdList, }));
+		setLists((prev) => ({ ...prev, [createdList.id!]: createdList }));
 
-        setNewListName("");
-        setActiveList(createdList.id!);
-    };
+		setNewListName("");
+		setActiveList(createdList.id!);
+	};
 
+	const handleLogOut = () => {
+		logout();
+		setActiveList(null);
+		router.push("/");
+	};
 
-    const handleLogOut = () => {
-        logout();
-        setActiveList(null);
-        router.push("/");
-    };
+	const handleDeleteList = async (listId: number | undefined) => {
+		if (!listId) return;
 
-    const handleDeleteList = async (listId: number | undefined) => {
-        if (!listId) return;
+		const response = await deleteAllTasks(listId);
 
-        const response = await deleteAllTasks(listId);
+		if (response.success) {
+			const listDeleteResponse = await deleteList(listId);
+			if (listDeleteResponse.success) {
+				if (activeListId === listId) {
+					setActiveList(null);
+				}
 
-        if (response.success) {
-            const listDeleteResponse = await deleteList(listId)
-            if (listDeleteResponse.success) {
-                if (activeListId === listId) {
-                    setActiveList(null)
-                }
+				setLists((prev) => {
+					const { [listId]: _, ...remainingLists } = prev;
+					return remainingLists;
+				});
+			}
+		}
+	};
 
-                setLists((prev) => {
-                    const { [listId]: _, ...remainingLists } = prev;
-                    return remainingLists;
-                })
-            }
-        }
-    }
+	return (
+		<>
+			<div className="h-full">
+				{/* Username and signout */}
+				<div className="w-full flex justify-between">
+					<span className="font-bold text-xl">{userName}</span>
 
-    return (
-        <>
-            {/* Username and signout */}
-            <div className="w-full flex justify-between">
-                <span className="font-bold text-xl">
-                    {userName}
-                </span>
+					<button
+						className="scale-[0.75] cursor-pointer"
+						onClick={handleLogOut}
+					>
+						<LogOut />
+					</button>
+				</div>
 
-                <button
-                    className="scale-[0.75] cursor-pointer"
-                    onClick={handleLogOut}
-                >
-                    <LogOut />
-                </button>
-            </div>
+				{/* Horizontal ruling */}
+				<div className="w-full border border-gray-200" />
 
-            {/* Horizontal ruling */}
-            <div className="w-full border border-gray-200" />
+				{/* List navigation */}
+				<span className="font-bold text-gray-500">MY LISTS</span>
 
-            {/* List navigation */}
-            <span className="font-bold text-gray-500">
-                MY LISTS
-            </span>
+				<div className="text-md flex flex-col items-start gap-2 -mt-2 overflow-y-auto">
+					{Object.values(lists).map((list) => (
+						<Fragment key={list.id}>
+							<div
+								className={`group flex items-center w-full rounded-md ${
+									list.id === activeListId
+										? "bg-gray-200"
+										: ""
+								}`}
+							>
+								<button
+									className="min-w-0 flex-1 text-[14px] px-3 py-1.5 text-start
+                                cursor-pointer rounded-md
+                                hover:bg-gray-200 transition-colors"
+									onClick={() => {
+										setActiveList(list.id!);
+									}}
+								>
+									<span className="block w-full truncate">
+										{list.listName}
+									</span>
+								</button>
 
-            <div className="text-md flex flex-col items-start gap-2 -mt-2 overflow-y-auto">
-                {Object.values(lists).map((list) => (
-                    <Fragment key={list.id}>
-                        <div
-                            className={`group flex items-center w-full rounded-md ${list.id === activeListId ? "bg-gray-200" : ""
-                                }`}
-                        >
-                            <button
-                                className="min-w-0 flex-1 text-[14px] px-3 py-1.5 text-start
-                       cursor-pointer rounded-md
-                       hover:bg-gray-200 transition-colors"
-                                onClick={() => {
-                                    setActiveList(list.id!);
-                                }}
-                            >
-                                <span className="block w-full truncate">
-                                    {list.listName}
-                                </span>
-                            </button>
-
-                            <button
-                                className="mr-1 p-1.5 rounded-md text-gray-400
+								<button
+									className="mr-1 p-1.5 rounded-md text-gray-400
                        hover:bg-red-100 hover:text-red-500
                        transition-all cursor-pointer"
-                                onClick={() => { handleDeleteList(list.id) }}
-                            >
-                                <Trash size={15} />
-                            </button>
-                        </div>
-                    </Fragment>
-                ))}
+									onClick={() => {
+										handleDeleteList(list.id);
+									}}
+								>
+									<Trash size={15} />
+								</button>
+							</div>
+						</Fragment>
+					))}
 
-                {/* New List */}
-                <input
-                    type="text"
-                    value={newListName}
-                    onChange={(e) =>
-                        setNewListName(e.target.value)
-                    }
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                            handleNewList();
-                        }
-                    }}
-                    placeholder="+ New List"
-                    className="text-gray-400 text-[14px] px-3 cursor-text hover:bg-gray-200 hover:text-gray-500 w-full py-1 text-start rounded-md outline-none"
-                />
-            </div>
-        </>
-    );
+					{/* New List */}
+					<input
+						type="text"
+						value={newListName}
+						onChange={(e) => setNewListName(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === "Enter") {
+								handleNewList();
+							}
+						}}
+						placeholder="+ New List"
+						className="text-gray-400 text-[14px] px-3 cursor-text hover:bg-gray-200 hover:text-gray-500 w-full py-1 text-start rounded-md outline-none"
+					/>
+				</div>
+			</div>
+
+			<ins
+				className="adsbyadgeist"
+				style={{
+					display: "inline-block",
+					width: "100%",
+					height: "auto",
+					fontFamily: "Arial",
+					color: "#63aa75",
+				}}
+				data-ad-slot="6ac7269434d6916f9b496456"
+			/>
+		</>
+	);
 }

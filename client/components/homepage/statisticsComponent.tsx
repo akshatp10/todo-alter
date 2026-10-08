@@ -4,89 +4,120 @@ import { Task } from "@/db/databaseTypes";
 import { useState } from "react";
 
 interface ListStatComponentProps {
-    tasks: Record<number, Task>;
+	tasks: Record<number, Task>;
 }
 
 export default function ListStatsComponent({ tasks }: ListStatComponentProps) {
+	const [publicAccess, setPublicAccess] = useState<boolean>(false);
 
-    const [publicAccess, setPublicAccess] = useState<boolean>(false)
+	const items = Object.values(tasks);
 
-    const items = Object.values(tasks);
+	const totalTasks = items.length;
+	const pendingTasks = items.filter(
+		(item) => item.status === "pending",
+	).length;
+	const completedTasks = totalTasks - pendingTasks;
 
-    const totalTasks = items.length;
-    const pendingTasks = items.filter(
-        (item) => item.status === "pending"
-    ).length;
-    const completedTasks = totalTasks - pendingTasks;
+	const tagCounts = items.reduce<Record<string, number>>((acc, item) => {
+		item.tags.forEach((tag) => {
+			acc[tag] = (acc[tag] || 0) + 1;
+		});
 
-    const tagCounts = items.reduce<Record<string, number>>(
-        (acc, item) => {
-            item.tags.forEach((tag) => {
-                acc[tag] = (acc[tag] || 0) + 1;
-            });
+		return acc;
+	}, {});
 
-            return acc;
-        },
-        {}
-    );
+	return (
+		<>
+			{/* List Statistics */}
+			<div className="shrink-0">
+				<span className="font-bold text-gray-500 text-md">
+					LIST STATISTICS
+				</span>
 
-    return (
-        <>
-            {/* List Statistics */}
-            <div className="shrink-0">
-                <span className="font-bold text-gray-500 text-md">LIST STATISTICS</span>
+				<div className="flex flex-col gap-2 p-3 font-semibold">
+					<div className="flex justify-between">
+						<p>Total Tasks</p>
+						<p>{totalTasks}</p>
+					</div>
+					<div className="flex justify-between">
+						<p>Pending</p>
+						<p className="text-red-500">{pendingTasks}</p>
+					</div>
+					<div className="flex justify-between">
+						<p>Completed</p>
+						<p className="text-green-500">{completedTasks}</p>
+					</div>
+				</div>
+			</div>
 
-                <div className="flex flex-col gap-2 p-3 font-semibold">
-                    <div className="flex justify-between">
-                        <p>Total Tasks</p>
-                        <p>{totalTasks}</p>
-                    </div>
-                    <div className="flex justify-between">
-                        <p>Pending</p>
-                        <p className="text-red-500">{pendingTasks}</p>
-                    </div>
-                    <div className="flex justify-between">
-                        <p>Completed</p>
-                        <p className="text-green-500">{completedTasks}</p>
-                    </div>
-                </div>
-            </div>
+			{/* horizontal ruling */}
+			<div className="w-full border border-gray-200"></div>
 
-            {/* horizontal ruling */}
-            <div className="w-full border border-gray-200"></div>
+			{/* Tags */}
+			<div className="flex flex-col flex-1 gap-2 p-3 font-semibold text-gray-400 overflow-y-auto">
+				{Object.entries(tagCounts).map(([tag, count]) => (
+					<div className="flex justify-between" key={tag}>
+						<p className="truncate">#{tag}</p>
+						<p className="text-black">{count}</p>
+					</div>
+				))}
 
-            {/* Tags */}
-            <div className="flex flex-col flex-1 gap-2 p-3 font-semibold text-gray-400 overflow-y-auto">
-                {Object.entries(tagCounts).map(([tag, count]) => (
-                    <div className="flex justify-between" key={tag}>
-                        <p className="truncate">#{tag}</p>
-                        <p className="text-black">{count}</p>
-                    </div>))}
+				<div className="flex justify-between">
+					<p>No Tag</p>
+					<p className="text-black">
+						{items.filter((item) => item.tags.length === 0).length}
+					</p>
+				</div>
+			</div>
 
-                <div className="flex justify-between">
-                    <p>No Tag</p>
-                    <p className="text-black">
-                        {items.filter((item) => item.tags.length === 0).length}
-                    </p>
-                </div>
-            </div>
-
-            <div className="shrink-0">
-                <div className="flex flex-col py-4 border-t border-gray-200 gap-2">
-                    <span className="font-bold text-gray-500 text-md">PUBLIC ACCESS</span>
-                    {publicAccess &&
-                        <>
-                            <div className="bg-gray-200 text-xs p-2 max-h-20 rounded-md">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit natus atque amet, explicabo aspernatur eius temporibus odio mollitia omnis, velit, vel nostrum. Impedit magni dolores autem, veniam laudantium neque accusamus.</div>
-                            <button className="mx-auto w-full border py-1 rounded-md border-gray-200 cursor-pointer" onClick={() => {
-                                navigator.clipboard.writeText("Copying the data to clipboard")
-                            }}>Copy Public Link</button>
-                        </>
-                    }
-                    <button className={`mx-auto w-full ${publicAccess ? "text-red-500 bg-red-50" : "text-green-500 bg-green-50"} border py-1 rounded-md border-gray-200 cursor-pointer`} onClick={() => { setPublicAccess(!publicAccess) }}>
-                        {publicAccess ? "Revoke Access" : "Give Public Access"}
-                    </button>
-                </div>
-            </div>
-        </>
-    );
+			<div className="flex flex-col items-center gap-5">
+				<ins
+					className="adsbyadgeist"
+					style={{
+						display: "inline-block",
+						width: 400,
+						height: 400,
+						fontFamily: "Arial",
+						color: "#63aa75",
+					}}
+					data-ad-slot="6ac63a423741c8e66ba98ed3"
+				/>
+				<div className="flex flex-col py-4 border-t border-gray-200 gap-2 w-full">
+					<span className="font-bold text-gray-500 text-md">
+						PUBLIC ACCESS
+					</span>
+					{publicAccess && (
+						<>
+							<div className="bg-gray-200 text-xs p-2 max-h-20 rounded-md">
+								Lorem ipsum dolor, sit amet consectetur
+								adipisicing elit. Sit natus atque amet,
+								explicabo aspernatur eius temporibus odio
+								mollitia omnis, velit, vel nostrum. Impedit
+								magni dolores autem, veniam laudantium neque
+								accusamus.
+							</div>
+							<button
+								className="mx-auto w-full border py-1 rounded-md border-gray-200 cursor-pointer"
+								onClick={() => {
+									navigator.clipboard.writeText(
+										"Copying the data to clipboard",
+									);
+								}}
+							>
+								Copy Public Link
+							</button>
+						</>
+					)}
+					<button
+						className={`mx-auto w-full ${publicAccess ? "text-red-500 bg-red-50" : "text-green-500 bg-green-50"} border py-1 rounded-md border-gray-200 cursor-pointer`}
+						onClick={() => {
+							setPublicAccess(!publicAccess);
+						}}
+					>
+						{publicAccess ? "Revoke Access" : "Give Public Access"}
+					</button>
+				</div>
+			</div>
+		</>
+	);
 }
