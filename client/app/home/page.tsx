@@ -77,9 +77,9 @@ export default function HomePage() {
 	const currentList = activeListId !== null ? lists[activeListId] : undefined;
 
 	return (
-		<div className="w-screen h-screen flex">
+		<div className="flex h-screen w-screen overflow-hidden bg-white text-gray-900">
 			{/* Sidebar */}
-			<div className="flex-1 min-w-fit h-full flex flex-col gap-4 border-r border-gray-200 bg-gray-100 p-4">
+			<div className="flex h-full w-64 shrink-0 flex-col gap-4 overflow-hidden border-r border-gray-200 bg-gray-50 p-4">
 				<SideBarHome
 					lists={lists}
 					setLists={setLists}
@@ -89,30 +89,33 @@ export default function HomePage() {
 			</div>
 
 			{/* Working list */}
-			<div className="flex-2 min-w-fit flex flex-col p-4 overflow-y-auto h-full items-center">
-				<WokringListComponent
-					curList={currentList}
-					setLists={setLists}
-					userId={userId}
-					tasks={tasks}
-					setTasks={setTasks}
-					key={activeListId}
-				/>
-				<ins
-					className="adsbyadgeist"
-					style={{
-						display: "inline-block",
-						width: 800,
-						height: 80,
-						fontFamily: "Arial",
-						color: "#63aa75",
-					}}
-					data-ad-slot="6ac63e523741c8e66ba999a0"
-				></ins>
+			<div className="flex h-full min-w-0 flex-1 flex-col overflow-y-auto">
+				<div className="mx-auto flex w-full max-w-4xl min-w-0 flex-1 flex-col px-6 py-6">
+					<WokringListComponent
+						curList={currentList}
+						setLists={setLists}
+						userId={userId}
+						tasks={tasks}
+						setTasks={setTasks}
+						key={activeListId}
+					/>
+
+					<ins
+						className="adsbyadgeist"
+						style={{
+							display: "inline-block",
+							width: 800,
+							height: 80,
+							fontFamily: "Arial",
+							color: "#63aa75",
+						}}
+						data-ad-slot="6ac63e523741c8e66ba999a0"
+					></ins>
+				</div>
 			</div>
 
 			{/* Statistics */}
-			<div className="flex-1 min-w-fit flex flex-col border-l border-gray-200 p-4">
+			<div className="hidden h-full w-72 shrink-0 flex-col overflow-hidden border-l border-gray-200 bg-gray-50 p-5 lg:flex">
 				<ListStatsComponent tasks={tasks} key={activeListId} />
 			</div>
 		</div>

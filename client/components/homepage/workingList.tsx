@@ -106,9 +106,13 @@ export default function WokringListComponent(props: WokringListComponentProps) {
 	if (curList === undefined)
 		return (
 			<>
-				<div className="flex items-center justify-center py-16 text-sm text-gray-400 flex-col flex-1">
-					<p className="text-2xl text-black">No Lists Selected</p>
-					<p>Please create/select a list</p>
+				<div className="flex flex-1 flex-col items-center justify-center py-16 text-center">
+					<p className="text-2xl font-semibold tracking-tight text-gray-900">
+						No Lists Selected
+					</p>
+					<p className="mt-1 text-sm text-gray-400">
+						Please create/select a list
+					</p>
 				</div>
 			</>
 		);
@@ -124,10 +128,10 @@ export default function WokringListComponent(props: WokringListComponentProps) {
 				/>
 			)}
 
-			<div className="flex w-full min-w-0 justify-between p-3 flex-1">
-				<div className="text-3xl font-bold flex flex-1 min-w-0 gap-2 items-center">
+			<div className="flex w-full min-w-0 items-center justify-between border-b border-gray-200 pb-5">
+				<div className="flex min-w-0 flex-1 items-center gap-2">
 					{!updateState ? (
-						<span className="min-w-0 truncate">
+						<span className="min-w-0 truncate text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
 							{curList.listName}
 						</span>
 					) : (
@@ -145,22 +149,23 @@ export default function WokringListComponent(props: WokringListComponentProps) {
 								}
 							}}
 							autoFocus
+							className="min-w-0 flex-1 rounded-md border border-gray-300 bg-white px-2 py-1 text-2xl font-bold outline-none ring-0 focus:border-gray-500 sm:text-3xl"
 						/>
 					)}
 
 					<button
-						className="shrink-0 cursor-pointer"
+						className="shrink-0 cursor-pointer rounded-md p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
 						onClick={() => {
 							setNewTitle(curList.listName ?? "");
 							setUpdateState(!updateState);
 						}}
 					>
-						<Pencil width={20} className="mt-1 text-gray-500" />
+						<Pencil width={18} className="mt-0.5" />
 					</button>
 				</div>
 
 				<button
-					className="shrink-0 bg-black text-white px-4 cursor-pointer flex justify-center items-center gap-2 rounded-md"
+					className="ml-4 flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md bg-black px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
 					onClick={handleClickNewItem}
 				>
 					<Plus className="w-3.5" />
@@ -169,71 +174,77 @@ export default function WokringListComponent(props: WokringListComponentProps) {
 			</div>
 
 			{mappedTasks.length > 0 ? (
-				mappedTasks.map((task: Task) => (
-					<div
-						className="flex w-full gap-3 py-6 border-b border-gray-200"
-						key={task?.id}
-					>
-						<div className="shrink-0 pt-1">
-							<input
-								type="checkbox"
-								name="checkTask"
-								checked={task.status === "completed"}
-								onChange={() => handleToggleTask(task.id!)}
-								className="h-4 w-4 cursor-pointer accent-black"
-							/>
-						</div>
-
-						<div className="flex-1 flex justify-between gap-4 min-w-0">
-							<div className="min-w-0 flex-1">
-								<div className="flex items-start gap-2">
-									<span
-										className={`block wrap-break-word text-sm font-medium ${
-											task.status === "completed"
-												? "line-through text-gray-400"
-												: "text-gray-800"
-										}`}
-									>
-										{task?.taskName}
-									</span>
-
-									<button
-										type="button"
-										onClick={() =>
-											handleUpdateTask(task.id)
-										}
-										className="shrink-0 p-1 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
-									>
-										<SquarePen size={15} />
-									</button>
-								</div>
-
-								<div className="flex flex-wrap gap-1.5 mt-2 text-xs">
-									{task.tags.map((tag: string) => (
-										<span
-											className="bg-gray-100 text-gray-600 px-2 py-1 rounded-md"
-											key={tag}
-										>
-											#{tag}
-										</span>
-									))}
-								</div>
+				<div className="divide-y divide-gray-200">
+					{mappedTasks.map((task: Task) => (
+						<div
+							className="group flex w-full gap-3 py-5"
+							key={task?.id}
+						>
+							<div className="shrink-0 pt-0.5">
+								<input
+									type="checkbox"
+									name="checkTask"
+									checked={task.status === "completed"}
+									onChange={() => handleToggleTask(task.id!)}
+									className="h-4 w-4 cursor-pointer accent-black"
+								/>
 							</div>
 
-							<button
-								type="button"
-								className="shrink-0 p-1.5 rounded-md text-gray-400 hover:bg-red-100 hover:text-red-500 transition-colors cursor-pointer"
-								onClick={() => handleTaskDelete(task.id)}
-							>
-								<Delete size={17} />
-							</button>
+							<div className="flex min-w-0 flex-1 justify-between gap-4">
+								<div className="min-w-0 flex-1">
+									<div className="flex items-start gap-1.5">
+										<span
+											className={`block wrap-break-word text-sm font-medium leading-5 ${
+												task.status === "completed"
+													? "text-gray-400 line-through"
+													: "text-gray-800"
+											}`}
+										>
+											{task?.taskName}
+										</span>
+
+										<button
+											type="button"
+											onClick={() =>
+												handleUpdateTask(task.id)
+											}
+											className="shrink-0 cursor-pointer rounded-md p-1 text-gray-300 opacity-0 transition-all hover:bg-gray-100 hover:text-gray-700 group-hover:opacity-100"
+										>
+											<SquarePen size={14} />
+										</button>
+									</div>
+
+									<div className="mt-2 flex flex-wrap gap-1.5 text-xs">
+										{task.tags.map((tag: string) => (
+											<span
+												className="rounded-md bg-gray-100 px-2 py-1 text-gray-500"
+												key={tag}
+											>
+												#{tag}
+											</span>
+										))}
+									</div>
+								</div>
+
+								<button
+									type="button"
+									className="shrink-0 cursor-pointer rounded-md p-1.5 text-gray-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+									onClick={() => handleTaskDelete(task.id)}
+								>
+									<Delete size={16} />
+								</button>
+							</div>
 						</div>
-					</div>
-				))
+					))}
+				</div>
 			) : (
-				<div className="flex items-center justify-center py-16 text-sm text-gray-400 flex-col">
-					<p className="text-2xl text-black">No Tasks added</p>
-					<p>Add tasks to the list</p>
+				<div className="flex flex-1 flex-col items-center justify-center py-16 text-center">
+					<p className="text-2xl font-semibold tracking-tight text-gray-900">
+						No Tasks added
+					</p>
+					<p className="mt-1 text-sm text-gray-400">
+						Add tasks to the list
+					</p>
 				</div>
 			)}
 		</>

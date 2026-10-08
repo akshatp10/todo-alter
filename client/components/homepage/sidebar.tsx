@@ -130,7 +130,7 @@ export default function SideBarHome({
 				{/* List navigation */}
 				<span className="font-bold text-gray-500">MY LISTS</span>
 
-				<div className="text-md flex flex-col items-start gap-2 -mt-2 overflow-y-auto">
+				<div className="text-md flex flex-col items-start gap-2 overflow-y-auto">
 					{Object.values(lists).map((list) => (
 						<Fragment key={list.id}>
 							<div
